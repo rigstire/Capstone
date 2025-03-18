@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Benchmarks</h1>
+<table >
+    <tr>
+        <th>AI Model</th>
+        <th>Device</th>
+        <th>Test Date</th>
+        <th>Inference Time (ms)</th>
+        <th>Accuracy (%)</th>
+    </tr>
+    {% for benchmark in benchmarks %}
+    <tr>
+        <td><a href="{% url 'ai_model_detail' benchmark.ai_model.id %}">{{ benchmark.ai_model.name }}</a></td>
+        <td><a href="{% url 'device_detail' benchmark.device.id %}">{{ benchmark.device.name }}</a></td>
+        <td>{{ benchmark.test_date }}</td>
+        <td>{{ benchmark.inference_time }}</td>
+        <td>{{ benchmark.accuracy }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

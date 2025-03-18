@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ device.name }}</h1>
+<p><strong>Manufacturer:</strong> {{ device.manufacturer }}</p>
+<p><strong>Chipset:</strong> {{ device.chipset }}</p>
+<p><strong>RAM:</strong> {{ device.ram }} MB</p>
+<p><strong>Storage:</strong> {{ device.storage }} GB</p>
+<p><strong>Operating System:</strong> {{ device.os }}</p>
+
+<h2>Benchmarks</h2>
+<table>
+    <tr>
+        <th>AI Model</th>
+        <th>Test Date</th>
+        <th>Inference Time (ms)</th>
+        <th>Accuracy (%)</th>
+    </tr>
+    {% for benchmark in device.benchmarks.all %}
+    <tr>
+        <td><a href="{% url 'ai_model_detail' benchmark.ai_model.id %}">{{ benchmark.ai_model.name }}</a></td>
+        <td>{{ benchmark.test_date }}</td>
+        <td>{{ benchmark.inference_time }}</td>
+        <td>{{ benchmark.accuracy }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="{% url 'devices_list' %}">Back to Devices</a>
+{% endblock %}

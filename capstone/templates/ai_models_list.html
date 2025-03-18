@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>AI Models</h1>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Version</th>
+        <th>Architecture</th>
+        <th>Parameters</th>
+        <th>Release Date</th>
+    </tr>
+    {% for model in ai_models %}
+    <tr>
+        <td><a href="{% url 'ai_model_detail' model.id %}">{{ model.name }}</a></td>
+        <td>{{ model.version }}</td>
+        <td>{{ model.architecture }}</td>
+        <td>{{ model.parameters }}</td>
+        <td>{{ model.release_date }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
