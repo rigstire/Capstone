@@ -4,7 +4,7 @@ from django.conf import settings
 
 class AIModel(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    version = models.CharField(max_length=50, blank=True, null=True)
+    runtime = models.CharField(max_length=50, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     release_date = models.DateField(blank=True, null=True)
     parameters = models.PositiveIntegerField(blank=True, null=True)  # Number of model parameters
