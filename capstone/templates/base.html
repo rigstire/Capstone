@@ -1,19 +1,36 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Benchmark Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body>
-    <nav>
-        <a href="{% url 'ai_models_list' %}">AI Models</a> |
-        <a href="{% url 'devices_list' %}">Devices</a> |
-        <a href="{% url 'benchmarks_list' %}">Benchmarks</a>
-    </nav>
 
-    <hr>
-    {% block content %}
+<!-- Body class conditionally added here for background handling -->
+<body class="{% if request.path == '/' %}no-bg{% else %}with-bg{% endif %}">
+    {% block navbar %}
+    <nav>
+        <a class="neon typing" href="{% url 'home' %}">Home</a>
+        <a class="neon typing" href="{% url 'ai_models_list' %}">AI Models</a>
+        <a class="neon typing" href="{% url 'devices_list' %}">Devices</a>
+        <a class="neon typing" href="{% url 'benchmarks_list' %}">Benchmarks</a>
+    </nav>
     {% endblock %}
+
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <script>
+        document.querySelectorAll("table tr").forEach(row => {
+            row.addEventListener("mouseenter", () => row.style.boxShadow = "0 0 8px #1f6feb");
+            row.addEventListener("mouseleave", () => row.style.boxShadow = "none");
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block navbar %}
+<!-- Navbar intentionally removed -->
+{% endblock %}
+
+{% block content %}
+<video autoplay muted loop id="bg-video">
+    <source src="{% static 'videos/backgroundvid.mp4' %}" type="video/mp4">
+    Your browser does not support HTML5 video.
+</video>
+
+<div class="content-wrapper">
+    <h1 class="neon typing">Welcome to the AI Benchmark Dashboard</h1>
+    <p class="neon" style="animation-delay: 2s;">Explore performance data across models and devices.</p>
+</div>
+    <div style="display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center; margin-top: 2rem;">
+        <a class="neon typing" href="{% url 'ai_models_list' %}">Explore AI Models</a>
+        <a class="neon typing" href="{% url 'devices_list' %}">View Devices</a>
+        <a class="neon typing" href="{% url 'benchmarks_list' %}">Check Benchmarks</a>
+
+</div>
+
+
+
+{% endblock %}

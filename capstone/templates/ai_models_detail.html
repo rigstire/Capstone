@@ -1,13 +1,13 @@
-{% extends "base.html" %}
+{% extends "base.html" %}<h1>{{ ai_model.name }} ({{ ai_model.version }})</h1>
+{% load static %}
 
-{% block content %}
-<h1>{{ ai_model.name }} ({{ ai_model.version }})</h1>
+
 <p><strong>Architecture:</strong> {{ ai_model.architecture }}</p>
 <p><strong>Parameters:</strong> {{ ai_model.parameters }}</p>
 <p><strong>Release Date:</strong> {{ ai_model.release_date }}</p>
 <p><strong>Description:</strong> {{ ai_model.description }}</p>
 
-<h2>Benchmarks</h2>
+<h2 class="neon typing">Benchmarks</h2>
 <table>
     <tr>
         <th>Device</th>
