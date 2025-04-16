@@ -4,7 +4,7 @@
 <h1>{{ device.name }}</h1>
 <p><strong>Manufacturer:</strong> {{ device.manufacturer }}</p>
 <p><strong>Chipset:</strong> {{ device.chipset }}</p>
-<p><strong>RAM:</strong> {{ device.ram }} MB</p>
+<p><strong>RAM:</strong> {{ device.ram }} GB</p>
 <p><strong>Storage:</strong> {{ device.storage }} GB</p>
 <p><strong>Operating System:</strong> {{ device.os }}</p>
 
@@ -15,13 +15,14 @@
         <th>Test Date</th>
         <th>Inference Time (ms)</th>
         <th>Accuracy (%)</th>
+        <th>Memory Usage (mb)</th>
     </tr>
     {% for benchmark in device.benchmarks.all %}
     <tr>
         <td><a href="{% url 'ai_model_detail' benchmark.ai_model.id %}">{{ benchmark.ai_model.name }}</a></td>
         <td>{{ benchmark.test_date }}</td>
         <td>{{ benchmark.inference_time }}</td>
-        <td>{{ benchmark.accuracy }}</td>
+        <td>{{ benchmark.ai_model.accuracy }}</td>
         <td>{{ benchmark.memory_usage }}</td>
     </tr>
     {% endfor %}

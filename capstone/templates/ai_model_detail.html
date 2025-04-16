@@ -1,0 +1,30 @@
+{% extends "base.html" %}<h1>{{ ai_model.name }}</h1>
+{% load static %}
+
+{% block content %}
+<p><strong>Model:</strong> {{ai_model.name}}</p>
+<p><strong>Parameters:</strong> {{ ai_model.parameters }}</p>
+<p><strong>Description:</strong> {{ ai_model.description }}</p>
+
+<h2 class="neon typing">Benchmarks</h2>
+<table>
+    <tr>
+        <th>Device</th>
+        <th>Test Date</th>
+        <th>Inference Time (ms)</th>
+        <th>Memory Usage (mb)</th>
+        <th>Accuracy (%)</th>
+    </tr>
+    {% for benchmark in ai_model.benchmarks.all %}
+    <tr>
+        <td><a href="{% url 'device_detail' benchmark.device.id %}">{{ benchmark.device.name }}</a></td>
+        <td>{{ benchmark.test_date }}</td>
+        <td>{{ benchmark.inference_time }}</td>
+        <td>{{ benchmark.memory_usage }}</td>
+        <td>{{ ai_model.accuracy }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="{% url 'ai_models_list' %}">Back to AI Models</a>
+{% endblock %}

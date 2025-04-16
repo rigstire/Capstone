@@ -6,16 +6,14 @@
 <table>
     <tr>
         <th>Name</th>
-        <th>Version</th>
-        <th>Architecture</th>
-        <th>Parameters</th>
+        <th>Accuracy</th>
+        <th>Input Parameters</th>
         <th>Release Date</th>
     </tr>
     {% for model in ai_models %}
     <tr>
         <td><a href="{% url 'ai_model_detail' model.id %}">{{ model.name }}</a></td>
-        <td>{{ model.runtime }}</td>
-        <td>{{ model.architecture }}</td>
+        <td>{{ model.accuracy }}</td>
         <td>{{ model.parameters }}</td>
         <td>{{ model.release_date }}</td>
     </tr>

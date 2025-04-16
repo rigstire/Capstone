@@ -3,16 +3,13 @@ from .models import AIModel
 
 @admin.register(AIModel)
 class AIModelAdmin(admin.ModelAdmin):
-    list_display = ("name", "runtime", "architecture", "parameters", "release_date", "created_at")
+    list_display = ("name", "parameters", "accuracy", "description")
     search_fields = ("name", "runtime", "architecture")
-    list_filter = ("architecture", "release_date")
     readonly_fields = ("created_at",)
     fieldsets = (
         ("Model Information", {
-            "fields": ("name", "runtime", "architecture", "parameters", "description")
+            "fields": ("name", "parameters", "accuracy","description")
         }),
-        ("Metadata", {
-            "fields": ("release_date", "created_at")
-        }),
+
     )
 
