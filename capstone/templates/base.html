@@ -2,6 +2,10 @@
 
 <!DOCTYPE html>
 <html lang="en">
+    <video autoplay muted loop id="bg-video">
+        <source src="{% static 'videos/backgroundvid.mp4' %}" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,10 +18,11 @@
 <body class="{% if request.path == '/' %}no-bg{% else %}with-bg{% endif %}">
     {% block navbar %}
     <nav>
-        <a class="neon typing" href="{% url 'home' %}">Home</a>
-        <a class="neon typing" href="{% url 'ai_models_list' %}">AI Models</a>
-        <a class="neon typing" href="{% url 'devices_list' %}">Devices</a>
-        <a class="neon typing" href="{% url 'benchmarks_list' %}">Benchmarks</a>
+        <a class href="{% url 'home' %}">Home</a>
+        <a class href="{% url 'ai_models_list' %}">AI Models</a>
+        <a class href="{% url 'devices_list' %}">Devices</a>
+        <a class href="{% url 'benchmarks_list' %}">Benchmarks</a>
+        <a class href="{% url 'compare-models' %}">Compare Models</a>    
     </nav>
     {% endblock %}
 

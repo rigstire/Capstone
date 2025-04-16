@@ -1,24 +1,305 @@
 {% extends "base.html" %}
 {% load static %}
+
 {% block content %}
-<h1 class="neon typing">Benchmarks</h1>
-<table >
-    <tr>
+
+<style>
+  :root {
+    --primary: #00f0ff;
+    --secondary: #ff00f0;
+    --dark: #0a0a1a;
+    --darker: #050510;
+    --light: #e0e0ff;
+    --glow: 0 0 10px var(--primary), 0 0 20px var(--primary);
+    --glow-secondary: 0 0 10px var(--secondary), 0 0 20px var(--secondary);
+    --success: #00ff88;
+    --warning: #ffaa00;
+    --danger: #ff3366;
+  }
+  
+  body {
+    background-color: var(--dark);
+    color: var(--light);
+    font-family: 'Rajdhani', 'Orbitron', sans-serif;
+    background-image: 
+      radial-gradient(circle at 20% 30%, rgba(0, 240, 255, 0.1) 0%, transparent 20%),
+      radial-gradient(circle at 80% 70%, rgba(255, 0, 240, 0.1) 0%, transparent 20%);
+  }
+  
+  .benchmarks-header {
+    text-align: center;
+    margin: 2rem 0 3rem;
+    position: relative;
+  }
+  
+  h1.neon {
+    color: var(--primary);
+    text-shadow: var(--glow);
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 2px;
+    display: inline-block;
+  }
+  
+  h1.neon.typing {
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 3px solid var(--primary);
+    animation: 
+      typing 3.5s steps(40, end),
+      blink-caret 0.75s step-end infinite;
+  }
+  
+  @keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+  }
+  
+  @keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: var(--primary); }
+  }
+  
+  .benchmarks-header:after {
+    content: '';
+    display: block;
+    width: 200px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    margin: 1rem auto;
+    border-radius: 3px;
+    box-shadow: var(--glow);
+  }
+  
+  .benchmarks-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  .benchmarks-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(10, 10, 26, 0.8);
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 3rem;
+  }
+  
+  .benchmarks-table:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    box-shadow: var(--glow);
+  }
+  
+  .benchmarks-table th {
+    background: rgba(0, 240, 255, 0.1);
+    color: var(--primary);
+    padding: 1.2rem 1rem;
+    text-align: left;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Orbitron', sans-serif;
+    position: relative;
+  }
+  
+  .benchmarks-table th:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 1rem;
+    right: 1rem;
+    height: 1px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+  }
+  
+  .benchmarks-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  
+  .benchmarks-table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .benchmarks-table tr:hover td {
+    background: rgba(0, 240, 255, 0.05);
+  }
+  
+  .benchmarks-table tr:hover td:first-child {
+    box-shadow: inset 4px 0 0 var(--primary);
+  }
+  
+  .benchmarks-table td a {
+    color: var(--secondary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    font-weight: 500;
+  }
+  
+  .benchmarks-table td a:hover {
+    color: var(--primary);
+    text-shadow: var(--glow);
+  }
+  
+  .benchmarks-table td a:after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--primary);
+    transition: width 0.3s ease;
+  }
+  
+  .benchmarks-table td a:hover:after {
+    width: 100%;
+  }
+  
+  /* Performance indicator styles */
+  .performance-cell {
+    position: relative;
+    padding-left: 1.5rem;
+  }
+  
+  .performance-cell:before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--light);
+  }
+  
+  .performance-cell.high:before {
+    background: var(--success);
+    box-shadow: 0 0 8px var(--success);
+  }
+  
+  .performance-cell.medium:before {
+    background: var(--warning);
+    box-shadow: 0 0 8px var(--warning);
+  }
+  
+  .performance-cell.low:before {
+    background: var(--danger);
+    box-shadow: 0 0 8px var(--danger);
+  }
+  
+  /* Data visualization bars */
+  .bar-container {
+    background: rgba(0, 240, 255, 0.1);
+    height: 6px;
+    border-radius: 3px;
+    margin-top: 0.3rem;
+  }
+  
+  .bar {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+  }
+  
+  /* Scanline effect */
+  @keyframes scanline {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+  }
+  
+  .benchmarks-table:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgba(0, 240, 255, 0.03) 50%,
+      transparent 100%
+    );
+    pointer-events: none;
+    animation: scanline 8s linear infinite;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 1024px) {
+    .benchmarks-container {
+      overflow-x: auto;
+      padding: 0;
+    }
+    
+    .benchmarks-table {
+      font-size: 0.9rem;
+      min-width: 900px;
+    }
+    
+    h1.neon {
+      font-size: 2rem;
+    }
+  }
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet">
+
+<div class="benchmarks-header">
+  <h1 class="neon typing">Benchmarks</h1>
+</div>
+
+<div class="benchmarks-container">
+  <table class="benchmarks-table">
+    <thead>
+      <tr>
         <th>AI Model</th>
         <th>Device</th>
         <th>Test Date</th>
         <th>Inference Time (ms)</th>
         <th>Accuracy (%)</th>
-    </tr>
-    {% for benchmark in benchmarks %}
-    <tr>
+        <th>Memory Usage</th>
+        <th>Runtime</th>
+        <th>Compute Unit</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for benchmark in benchmarks %}
+      <tr>
         <td><a href="{% url 'ai_model_detail' benchmark.ai_model.id %}">{{ benchmark.ai_model.name }}</a></td>
         <td><a href="{% url 'device_detail' benchmark.device.id %}">{{ benchmark.device.name }}</a></td>
         <td>{{ benchmark.test_date }}</td>
-        <td>{{ benchmark.inference_time }}</td>
-        <td>{{ benchmark.accuracy }}</td>
+        <td class="performance-cell {% if benchmark.inference_time < 10 %}high{% elif benchmark.inference_time < 50 %}medium{% else %}low{% endif %}">
+          {{ benchmark.inference_time }}
+          <div class="bar-container">
+            <div class="bar" style="width: {% widthratio benchmark.inference_time 100 100 %}%"></div>
+          </div>
+        </td>
+        <td class="performance-cell {% if benchmark.accuracy > 90 %}high{% elif benchmark.accuracy > 70 %}medium{% else %}low{% endif %}">
+          {{ benchmark.accuracy }}
+          <div class="bar-container">
+            <div class="bar" style="width: {{ benchmark.accuracy }}%"></div>
+          </div>
+        </td>
         <td>{{ benchmark.memory_usage }}</td>
-    </tr>
-    {% endfor %}
-</table>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
 {% endblock %}

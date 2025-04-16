@@ -1,26 +1,269 @@
 {% extends "base.html" %}
 {% load static %}
 
-
-
 {% block content %}
-<h1 class="neon typing">Devices</h1>
-<table>
-    <tr>
-        <th>Name</th>
+
+<style>
+  :root {
+    --primary: #00f0ff;
+    --secondary: #ff00f0;
+    --dark: #0a0a1a;
+    --darker: rgba(18, 18, 37, 0.9);
+    --light: #ffffff;
+    --glow: 0 0 10px var(--primary), 0 0 20px var(--primary);
+    --glow-secondary: 0 0 10px var(--secondary), 0 0 20px var(--secondary);
+    --success: #00ff88;
+    --warning: #ffaa00;
+    --danger: #ff3366;
+  }
+  
+  body {
+    background-color: var(--dark);
+    color: var(--light);
+    font-family: 'Rajdhani', 'Orbitron', sans-serif;
+    background-image: 
+      linear-gradient(to bottom, var(--darker), var(--dark)),
+      radial-gradient(circle at 20% 30%, rgba(0, 240, 255, 0.15) 0%, transparent 30%),
+      radial-gradient(circle at 80% 70%, rgba(255, 0, 240, 0.15) 0%, transparent 30%);
+  }
+  
+  .devices-header {
+    text-align: center;
+    margin: 2rem 0 3rem;
+    position: relative;
+  }
+  
+  h1.neon {
+    color: var(--primary);
+    text-shadow: var(--glow);
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 2px;
+  }
+  
+  h1.neon.typing {
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 3px solid var(--primary);
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    animation: 
+      typing 3.5s steps(40, end),
+      blink-caret 0.75s step-end infinite;
+  }
+  
+  @keyframes typing {
+    from { width: 0 }
+    to { width: 100% }
+  }
+  
+  @keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: var(--primary); }
+  }
+  
+  .devices-header:after {
+    content: '';
+    display: block;
+    width: 200px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    margin: 1rem auto;
+    border-radius: 3px;
+    box-shadow: var(--glow);
+  }
+  
+  .devices-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  .devices-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(18, 18, 37, 0.85);
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 3rem;
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    backdrop-filter: blur(4px);
+  }
+  
+  .devices-table:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    box-shadow: var(--glow);
+  }
+  
+  .devices-table th {
+    background: linear-gradient(to right, rgba(0, 240, 255, 0.25), rgba(0, 240, 255, 0.15));
+    color: var(--primary);
+    padding: 1.2rem 1rem;
+    text-align: left;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Orbitron', sans-serif;
+    position: relative;
+  }
+  
+  .devices-table th:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 1rem;
+    right: 1rem;
+    height: 1px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+  }
+  
+  .devices-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+    position: relative;
+    transition: all 0.3s ease;
+    background: rgba(18, 18, 37, 0.7);
+  }
+  
+  .devices-table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .devices-table tr:hover td {
+    background: rgba(0, 240, 255, 0.2);
+  }
+  
+  .devices-table tr:hover td:first-child {
+    box-shadow: inset 4px 0 0 var(--primary);
+  }
+  
+  .devices-table td a {
+    color: var(--secondary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    font-weight: 500;
+  }
+  
+  .devices-table td a:hover {
+    color: var(--primary);
+    text-shadow: var(--glow);
+  }
+  
+  .devices-table td a:after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--primary);
+    transition: width 0.3s ease;
+  }
+  
+  .devices-table td a:hover:after {
+    width: 100%;
+  }
+  
+  .spec-value {
+    font-weight: bold;
+    color: var(--light);
+  }
+  
+  .spec-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--primary);
+    margin-bottom: 0.3rem;
+  }
+  
+  .bar-container {
+    background: rgba(0, 240, 255, 0.1);
+    height: 6px;
+    border-radius: 3px;
+    margin-top: 0.5rem;
+    overflow: hidden;
+  }
+  
+  .bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+  }
+  
+  @media (max-width: 768px) {
+    .devices-container {
+      overflow-x: auto;
+      padding: 0;
+    }
+    
+    .devices-table {
+      font-size: 0.9rem;
+      min-width: 700px;
+    }
+    
+    h1.neon {
+      font-size: 2rem;
+    }
+  }
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet">
+
+<div class="devices-header">
+  <h1 class="neon typing">Devices</h1>
+</div>
+
+<div class="devices-container">
+  <table class="devices-table">
+    <thead>
+      <tr>
+        <th>Device Name</th>
         <th>Manufacturer</th>
         <th>Chipset</th>
-        <th>RAM (MB)</th>
-        <th>Storage (GB)</th>
-    </tr>
-    {% for device in devices %}
-    <tr>
-        <td><a href="{% url 'device_detail' device.id %}">{{ device.name }}</a></td>
-        <td>{{ device.manufacturer }}</td>
-        <td>{{ device.chipset }}</td>
-        <td>{{ device.ram }}</td>
-        <td>{{ device.storage }}</td>
-    </tr>
-    {% endfor %}
-</table>
+        <th>Memory</th>
+        <th>Storage</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for device in devices %}
+      <tr>
+        <td>
+          <a href="{% url 'device_detail' device.id %}">{{ device.name }}</a>
+        </td>
+        <td>
+          <span class="spec-value">{{ device.manufacturer }}</span>
+        </td>
+        <td>
+          <span class="spec-value">{{ device.chipset }}</span>
+        </td>
+        <td>
+          <span class="spec-label">RAM</span>
+          <span class="spec-value">{{ device.ram }} MB</span>
+          <div class="bar-container">
+            <div class="bar" style="width: {% widthratio device.ram 16000 100 %}%"></div>
+          </div>
+        </td>
+        <td>
+          <span class="spec-label">Storage</span>
+          <span class="spec-value">{{ device.storage }} GB</span>
+          <div class="bar-container">
+            <div class="bar" style="width: {% widthratio device.storage 1000 100 %}%"></div>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
 {% endblock %}
