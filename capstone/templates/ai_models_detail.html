@@ -1,18 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Benchmarks</h1>
-<table >
+<h1>{{ ai_model.name }} ({{ ai_model.version }})</h1>
+<p><strong>Architecture:</strong> {{ ai_model.architecture }}</p>
+<p><strong>Parameters:</strong> {{ ai_model.parameters }}</p>
+<p><strong>Release Date:</strong> {{ ai_model.release_date }}</p>
+<p><strong>Description:</strong> {{ ai_model.description }}</p>
+
+<h2>Benchmarks</h2>
+<table>
     <tr>
-        <th>AI Model</th>
         <th>Device</th>
         <th>Test Date</th>
         <th>Inference Time (ms)</th>
         <th>Accuracy (%)</th>
     </tr>
-    {% for benchmark in benchmarks %}
+    {% for benchmark in ai_model.benchmarks.all %}
     <tr>
-        <td><a href="{% url 'ai_model_detail' benchmark.ai_model.id %}">{{ benchmark.ai_model.name }}</a></td>
         <td><a href="{% url 'device_detail' benchmark.device.id %}">{{ benchmark.device.name }}</a></td>
         <td>{{ benchmark.test_date }}</td>
         <td>{{ benchmark.inference_time }}</td>
@@ -20,4 +24,6 @@
     </tr>
     {% endfor %}
 </table>
+
+<a href="{% url 'ai_models_list' %}">Back to AI Models</a>
 {% endblock %}

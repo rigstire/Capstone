@@ -1,41 +1,19 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
-    <video autoplay muted loop id="bg-video">
-        <source src="{% static 'videos/backgroundvid.mp4' %}" type="video/mp4">
-        Your browser does not support HTML5 video.
-    </video>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Benchmark Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-
-<!-- Body class conditionally added here for background handling -->
-<body class="{% if request.path == '/' %}no-bg{% else %}with-bg{% endif %}">
-    {% block navbar %}
+<body>
     <nav>
-        <a class href="{% url 'home' %}">Home</a>
-        <a class href="{% url 'ai_models_list' %}">AI Models</a>
-        <a class href="{% url 'devices_list' %}">Devices</a>
-        <a class href="{% url 'benchmarks_list' %}">Benchmarks</a>
-        <a class href="{% url 'compare-models' %}">Compare Models</a>    
+        <a href="{% url 'ai_models_list' %}">AI Models</a> |
+        <a href="{% url 'devices_list' %}">Devices</a> |
+        <a href="{% url 'benchmarks_list' %}">Benchmarks</a>
     </nav>
+
+    <hr>
+    {% block content %}
     {% endblock %}
-
-    <div class="container">
-        {% block content %}
-        {% endblock %}
-    </div>
-
-    <script>
-        document.querySelectorAll("table tr").forEach(row => {
-            row.addEventListener("mouseenter", () => row.style.boxShadow = "0 0 8px #1f6feb");
-            row.addEventListener("mouseleave", () => row.style.boxShadow = "none");
-        });
-    </script>
 </body>
 </html>
