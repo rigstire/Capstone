@@ -6,30 +6,214 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Benchmark Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== GLOBAL RESETS ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        /* ===== FULLSCREEN VIDEO BACKGROUND ===== */
+        #global-video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -100;
+            object-fit: cover;
+            filter: brightness(0.7);
+        }
+        
+        /* ===== BASE LAYOUT ===== */
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            color: #ffffff;
+            background-color: #000; /* Fallback */
+            overflow-x: hidden;
+        }
+        
+        /* ===== NAVIGATION BAR ===== */
+        nav {
+            background-color: rgba(10, 10, 26, 0.9);
+            padding: 1.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+        
+        nav a {
+            color: #00f0ff;
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            padding: 0.8rem 1.5rem;
+            border: 2px solid #00f0ff;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 5px #00f0ff;
+        }
+        
+        nav a:hover {
+            background-color: rgba(0, 240, 255, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px #00f0ff;
+        }
+        
+        /* ===== MAIN CONTENT CONTAINER ===== */
+        .main-content {
+            background-color: rgba(10, 10, 26, 0.85);
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 1200px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+            position: relative;
+        }
+        
+        /* ===== TYPOGRAPHY ===== */
+        h1, h2, h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00f0ff;
+            text-shadow: 0 0 10px #00f0ff;
+            margin-bottom: 1.5rem;
+        }
+        
+        p {
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        a {
+            color: #00f0ff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        a:hover {
+            text-shadow: 0 0 10px #00f0ff;
+        }
+        
+        /* ===== TABLES ===== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background-color: rgba(0, 240, 255, 0.05);
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+        }
+        
+        th {
+            background-color: rgba(0, 240, 255, 0.1);
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        tr:hover {
+            background-color: rgba(0, 240, 255, 0.1);
+        }
+        
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            nav a {
+                width: 100%;
+                text-align: center;
+            }
+            
+            .main-content {
+                padding: 1rem;
+                margin: 1rem;
+            }
+            
+            #global-video-bg {
+                width: auto;
+                height: 100%;
+            }
+        }
+    </style>
 </head>
 
-<!-- Body class conditionally added here for background handling -->
-<body class="{% if request.path == '/' %}no-bg{% else %}with-bg{% endif %}">
+<body>
+    <!-- Video Background - Shows on ALL pages -->
+    <video autoplay muted loop playsinline id="global-video-bg">
+        <source src="{% static 'videos/backgroundvid.mp4' %}" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+
     {% block navbar %}
     <nav>
-        <a class="neon typing" href="{% url 'home' %}">Home</a>
-        <a class="neon typing" href="{% url 'ai_models_list' %}">AI Models</a>
-        <a class="neon typing" href="{% url 'devices_list' %}">Devices</a>
-        <a class="neon typing" href="{% url 'benchmarks_list' %}">Benchmarks</a>
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'ai_models_list' %}">AI Models</a>
+        <a href="{% url 'devices_list' %}">Devices</a>
+        <a href="{% url 'benchmarks_list' %}">Benchmarks</a>
+        <a href="{% url 'compare_models' %}">Compare Models</a>
     </nav>
     {% endblock %}
 
-    <div class="container">
+    <main class="main-content">
         {% block content %}
+        <!-- Content from child templates will go here -->
         {% endblock %}
-    </div>
+    </main>
 
     <script>
-        document.querySelectorAll("table tr").forEach(row => {
-            row.addEventListener("mouseenter", () => row.style.boxShadow = "0 0 8px #1f6feb");
-            row.addEventListener("mouseleave", () => row.style.boxShadow = "none");
+        // Robust video background handling
+        document.addEventListener('DOMContentLoaded', function() {
+            const video = document.getElementById('global-video-bg');
+            
+            // Mobile device fixes
+            video.setAttribute('playsinline', '');
+            video.setAttribute('webkit-playsinline', '');
+            
+            // Auto-play with error handling
+            function attemptPlay() {
+                video.play()
+                    .catch(error => {
+                        if (error.name === 'NotAllowedError') {
+                            video.muted = true;
+                            video.play();
+                        }
+                    });
+            }
+            
+            // Try to play immediately
+            attemptPlay();
+            
+            // Try again when user interacts with page
+            document.addEventListener('click', attemptPlay, { once: true });
+            
+            // Responsive video sizing
+            function resizeVideo() {
+                const videoRatio = video.videoWidth / video.videoHeight;
+                const windowRatio = window.innerWidth / window.innerHeight;
+                
+                if (windowRatio > videoRatio) {
+                    video.style.width = '100%';
+                    video.style.height = 'auto';
+                } else {
+                    video.style.width = 'auto';
+                    video.style.height = '100%';
+                }
+            }
+            
+            video.addEventListener('loadedmetadata', resizeVideo);
+            window.addEventListener('resize', resizeVideo);
         });
     </script>
 </body>

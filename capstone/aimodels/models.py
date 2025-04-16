@@ -5,7 +5,7 @@ from django.conf import settings
 class AIModel(models.Model):
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True, null=True)
-    parameters = models.CharField(blank=True, null=True)  # Number of model parameters
+    parameters = models.CharField(blank=True, null=True, max_length=100)  # Number of model parameters
     accuracy = models.FloatField(blank=True,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

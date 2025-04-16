@@ -5,7 +5,7 @@ from django.apps import apps
 class Benchmark(models.Model):
     ai_model = models.ForeignKey('aimodels.AIModel', on_delete=models.CASCADE, related_name="benchmarks")
     device = models.ForeignKey('device.Device', on_delete=models.CASCADE, related_name="benchmarks")
-    runtime = models.CharField(blank=True, null=True, help_text="Target compiled runtime")
+    runtime = models.CharField(blank=True, null=True, help_text="Target compiled runtime", max_length=2000)
     test_date = models.DateField(auto_now_add=True)
     inference_time = models.FloatField(help_text="Time in milliseconds")  # Lower is better
     #accuracy = models.FloatField(help_text="Accuracy as a percentage")  # E.g., 95.3 for 95.3%
