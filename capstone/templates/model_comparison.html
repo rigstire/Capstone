@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+  :root {
+    --primary: #00f0ff;
+    --secondary: #ff00f0;
+    --dark: #0a0a1a;
+    --darker: #050510;
+    --light: #e0e0ff;
+    --glow: 0 0 10px var(--primary), 0 0 20px var(--primary);
+    --glow-secondary: 0 0 10px var(--secondary), 0 0 20px var(--secondary);
+  }
+  
+  body {
+    background-color: var(--dark);
+    color: var(--light);
+    font-family: 'Rajdhani', 'Orbitron', sans-serif;
+    background-image: 
+      radial-gradient(circle at 20% 30%, rgba(0, 240, 255, 0.1) 0%, transparent 20%),
+      radial-gradient(circle at 80% 70%, rgba(255, 0, 240, 0.1) 0%, transparent 20%);
+  }
+  
+  .model-select-form {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: rgba(10, 10, 26, 0.8);
+    border-radius: 12px;
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    backdrop-filter: blur(10px);
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 1.5rem;
+    align-items: center;
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  .model-select-form label {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--primary);
+    text-shadow: var(--glow);
+    position: relative;
+    padding-left: 1rem;
+  }
+  
+  .model-select-form label:before {
+    content: '>';
+    position: absolute;
+    left: 0;
+    animation: blink 1s step-end infinite;
+  }
+  
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  
+  .model-select-form select {
+    background: var(--darker);
+    color: var(--light);
+    border: 1px solid var(--primary);
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 0 10px rgba(0, 240, 255, 0.2);
+  }
+  
+  .model-select-form select:hover {
+    border-color: var(--secondary);
+    box-shadow: inset 0 0 15px rgba(255, 0, 240, 0.3), var(--glow-secondary);
+  }
+  
+  .model-select-form select:focus {
+    outline: none;
+    border-color: var(--secondary);
+    box-shadow: inset 0 0 20px rgba(255, 0, 240, 0.4), var(--glow-secondary);
+  }
+  
+  .model-select-form button {
+    grid-column: 1 / -1;
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    color: var(--darker);
+    border: none;
+    padding: 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .model-select-form button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.8);
+  }
+  
+  .model-select-form button:active {
+    transform: translateY(1px);
+  }
+  
+  .model-select-form button:after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      to bottom right,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    transform: rotate(30deg);
+    animation: shine 3s infinite;
+  }
+  
+  @keyframes shine {
+    0% { left: -50%; }
+    100% { left: 150%; }
+  }
+  
+  h2 {
+    text-align: center;
+    color: var(--primary);
+    text-shadow: var(--glow);
+    font-size: 2rem;
+    margin: 2rem 0;
+    position: relative;
+  }
+  
+  h2:after {
+    content: '';
+    display: block;
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    margin: 0.5rem auto;
+    border-radius: 3px;
+    box-shadow: var(--glow);
+  }
+  
+  table {
+    width: 100%;
+    max-width: 1000px;
+    margin: 2rem auto;
+    border-collapse: collapse;
+    background: rgba(10, 10, 26, 0.8);
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  table:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    box-shadow: var(--glow);
+  }
+  
+  table th {
+    background: rgba(0, 240, 255, 0.1);
+    color: var(--primary);
+    padding: 1rem;
+    text-align: left;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+    position: relative;
+  }
+  
+  table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  table tr:hover td {
+    background: rgba(0, 240, 255, 0.05);
+  }
+  
+  table td:first-child {
+    color: var(--secondary);
+    font-weight: 500;
+  }
+  
+  .no-data {
+    text-align: center;
+    color: var(--secondary);
+    margin: 2rem 0;
+    font-size: 1.2rem;
+    text-shadow: var(--glow-secondary);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .model-select-form {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    
+    table {
+      font-size: 0.9rem;
+    }
+  }
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet">
+<form method="get" class="model-select-form">
+  <label for="model_a">Model A:</label>
+  <select name="model_a" id="model_a" required>
+    {% for model in all_models %}
+      <option value="{{ model.id }}" {% if model.id|stringformat:"s" == request.GET.model_a %}selected{% endif %}>{{ model.name }}</option>
+    {% endfor %}
+  </select>
+
+  <label for="device_a">Device A:</label>
+  <select name="device_a" id="device_a" required>
+    {% for device in all_devices %}
+      <option value="{{ device.id }}" {% if device.id|stringformat:"s" == request.GET.device_a %}selected{% endif %}>{{ device.name }}</option>
+    {% endfor %}
+  </select>
+
+  <label for="model_b">Model B:</label>
+  <select name="model_b" id="model_b" required>
+    {% for model in all_models %}
+      <option value="{{ model.id }}" {% if model.id|stringformat:"s" == request.GET.model_b %}selected{% endif %}>{{ model.name }}</option>
+    {% endfor %}
+  </select>
+
+  <label for="device_b">Device B:</label>
+  <select name="device_b" id="device_b" required>
+    {% for device in all_devices %}
+      <option value="{{ device.id }}" {% if device.id|stringformat:"s" == request.GET.device_b %}selected{% endif %}>{{ device.name }}</option>
+    {% endfor %}
+  </select>
+
+  <button type="submit">
+    <span class="btn-text">Compare Models</span>
+    <span class="btn-gradient"></span>
+  </button>
+</form>
+
+
+{% if model_a and model_b and benchmark_a and benchmark_b %}
+  <h2>Comparing {{ model_a.name }} vs {{ model_b.name }}</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th>{{ model_a.name }}</th>
+        <th>{{ model_b.name }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Inference Time (ms)</td>
+        <td>{{ benchmark_a.inference_time }}</td>
+        <td>{{ benchmark_b.inference_time }}</td>
+      </tr>
+      <tr>
+        <td>Accuracy (%)</td>
+        <td>{{ benchmark_a.accuracy }}</td>
+        <td>{{ benchmark_b.accuracy }}</td>
+      </tr>
+      <tr>
+        <td>Memory Usage (Watts)</td>
+        <td>{{ benchmark_a.memory_usage }}</td>
+        <td>{{ benchmark_b.memory_usage }}</td>
+      </tr>
+      <tr>
+        <td>Compute Units</td>
+        <td>{{ benchmark_a.compute_units }}</td>
+        <td>{{ benchmark_b.compute_units }}</td>
+      </tr>
+      <tr>
+        <td>Device</td>
+        <td>{{ benchmark_a.device.name }}</td>
+        <td>{{ benchmark_b.device.name }}</td>
+      </tr>
+      <tr>
+        <td>Notes</td>
+        <td>{{ benchmark_a.notes|default:"N/A" }}</td>
+        <td>{{ benchmark_b.notes|default:"N/A" }}</td>
+      </tr>
+    </tbody>
+  </table>
+{% elif request.GET.model_a and request.GET.model_b %}
+  <p class="no-data">No benchmark data available for one or both models.</p>
+{% endif %}
+
+{% endblock %}
