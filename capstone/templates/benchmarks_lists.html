@@ -28,7 +28,7 @@
   
   .benchmarks-header {
     text-align: center;
-    margin: 2rem 0 3rem;
+    margin: 2rem 0 1rem;
     position: relative;
   }
   
@@ -78,6 +78,102 @@
     padding: 0 1rem;
   }
   
+  /* Filter Controls Styles */
+  .filters-container {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: rgba(10, 10, 26, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+  }
+  
+  .filter-group {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+  
+  .filter-group label {
+    color: var(--primary);
+    font-weight: 500;
+    min-width: 80px;
+  }
+  
+  .filter-group select, 
+  .filter-group input[type="text"] {
+    background: var(--darker);
+    color: var(--light);
+    border: 1px solid var(--primary);
+    padding: 0.5rem;
+    border-radius: 5px;
+    min-width: 150px;
+    font-family: 'Rajdhani', sans-serif;
+  }
+  
+  .filter-group select:focus,
+  .filter-group input[type="text"]:focus {
+    outline: none;
+    border-color: var(--secondary);
+    box-shadow: 0 0 10px rgba(255, 0, 240, 0.3);
+  }
+  
+  .filter-group button {
+    background: var(--primary);
+    color: var(--dark);
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+  }
+  
+  .filter-group button:hover {
+    background: var(--secondary);
+    color: var(--light);
+    box-shadow: var(--glow-secondary);
+  }
+  
+  .filter-group button[type="button"] {
+    background: transparent;
+    color: var(--light);
+    border: 1px solid var(--primary);
+    margin-left: 1rem;
+  }
+  
+  .filter-group button[type="button"]:hover {
+    background: rgba(255, 0, 240, 0.1);
+  }
+  
+  .field-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+  }
+  
+  .field-checkboxes label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--light);
+    font-weight: normal;
+    cursor: pointer;
+  }
+  
+  .field-checkboxes input[type="checkbox"] {
+    accent-color: var(--primary);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+  
+  /* Table Styles */
   .benchmarks-table {
     width: 100%;
     border-collapse: collapse;
@@ -202,13 +298,13 @@
     box-shadow: 0 0 8px var(--danger);
   }
   
-  /* Updated Data visualization bars */
+  /* Data visualization bars */
   .bar-container {
     background: rgba(0, 240, 255, 0.1);
     height: 6px;
     border-radius: 3px;
     margin-top: 0.3rem;
-    width: 100px; /* Fixed width */
+    width: 100px;
     position: relative;
     overflow: hidden;
   }
@@ -217,8 +313,8 @@
     height: 100%;
     border-radius: 3px;
     background: linear-gradient(90deg, var(--primary), var(--secondary));
-    width: 0; /* Start at 0 */
-    max-width: 100%; /* Never exceed container */
+    width: 0;
+    max-width: 100%;
     transition: width 0.5s ease-out;
   }
   
@@ -260,6 +356,16 @@
     h1.neon {
       font-size: 2rem;
     }
+    
+    .filter-group {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .field-checkboxes {
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
 </style>
 
@@ -270,32 +376,102 @@
 </div>
 
 <div class="benchmarks-container">
+  <!-- Filter Controls -->
+  <div class="filters-container">
+    <form id="benchmark-filters" method="GET">
+      <div class="filter-group">
+        <label for="device">Device:</label>
+        <select name="device" id="device">
+          <option value="">All Devices</option>
+          {% for device in available_devices %}
+            <option value="{{ device }}" {% if device == request.GET.device %}selected{% endif %}>{{ device }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="model">Model:</label>
+        <select name="model" id="model">
+          <option value="">All Models</option>
+          {% for model in available_models %}
+            <option value="{{ model }}" {% if model == request.GET.model %}selected{% endif %}>{{ model }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="input">Input Type:</label>
+        <select name="input" id="input">
+          <option value="">All Inputs</option>
+          {% for input in available_inputs %}
+            <option value="{{ input }}" {% if input == request.GET.input %}selected{% endif %}>{{ input }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="sort">Sort By:</label>
+        <select name="sort" id="sort">
+          <option value="">Default</option>
+          <option value="inference_time" {% if request.GET.sort == 'inference_time' %}selected{% endif %}>Inference Time (Low to High)</option>
+          <option value="-inference_time" {% if request.GET.sort == '-inference_time' %}selected{% endif %}>Inference Time (High to Low)</option>
+          <option value="memory_usage" {% if request.GET.sort == 'memory_usage' %}selected{% endif %}>Memory Usage (Low to High)</option>
+          <option value="-memory_usage" {% if request.GET.sort == '-memory_usage' %}selected{% endif %}>Memory Usage (High to Low)</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Show Fields:</label>
+        <div class="field-checkboxes">
+          <label><input type="checkbox" name="fields" value="ai_model" {% if 'ai_model' in selected_fields %}checked{% endif %}> Model</label>
+          <label><input type="checkbox" name="fields" value="device" {% if 'device' in selected_fields %}checked{% endif %}> Device</label>
+          <label><input type="checkbox" name="fields" value="test_date" {% if 'test_date' in selected_fields %}checked{% endif %}> Test Date</label>
+          <label><input type="checkbox" name="fields" value="inference_time" {% if 'inference_time' in selected_fields %}checked{% endif %}> Inference Time</label>
+          <label><input type="checkbox" name="fields" value="memory_usage" {% if 'memory_usage' in selected_fields %}checked{% endif %}> Memory Usage</label>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <button type="submit">Apply Filters</button>
+        <button type="button" onclick="window.location.href='{% url 'benchmarks_list' %}'">Reset</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Benchmark Table -->
   <table class="benchmarks-table">
     <thead>
       <tr>
-        <th>AI Model</th>
-        <th>Device</th>
-        <th>Test Date</th>
-        <th>Inference Time (ms)</th>
-        <th>Memory Usage</th>
+        {% if 'ai_model' in selected_fields %}<th>AI Model</th>{% endif %}
+        {% if 'device' in selected_fields %}<th>Device</th>{% endif %}
+        {% if 'test_date' in selected_fields %}<th>Test Date</th>{% endif %}
+        {% if 'inference_time' in selected_fields %}<th>Inference Time (ms)</th>{% endif %}
+        {% if 'memory_usage' in selected_fields %}<th>Memory Usage</th>{% endif %}
       </tr>
     </thead>
     <tbody>
       {% for benchmark in benchmarks %}
       <tr>
-        <td><a href="{% url 'ai_model_detail' benchmark.ai_model.id %}">{{ benchmark.ai_model.name }}</a></td>
-        <td><a href="{% url 'device_detail' benchmark.device.id %}">{{ benchmark.device.name }}</a></td>
-        <td>{{ benchmark.test_date }}</td>
-        <td class="performance-cell {% if benchmark.inference_time < 10 %}high{% elif benchmark.inference_time < 50 %}medium{% else %}low{% endif %}">
-          {{ benchmark.inference_time }}
-          <div class="bar-container">
-            <div class="bar" style="width: {% widthratio benchmark.inference_time 100 100 %}%"></div>
-          </div>
-        </td>
-
-          </div>
-        </td>
-        <td>{{ benchmark.memory_usage }}</td>
+        {% if 'ai_model' in selected_fields %}
+          <td><a href="{% url 'ai_model_detail' benchmark.ai_model.id %}">{{ benchmark.ai_model.name }}</a></td>
+        {% endif %}
+        {% if 'device' in selected_fields %}
+          <td><a href="{% url 'device_detail' benchmark.device.id %}">{{ benchmark.device.name }}</a></td>
+        {% endif %}
+        {% if 'test_date' in selected_fields %}
+          <td>{{ benchmark.test_date }}</td>
+        {% endif %}
+        {% if 'inference_time' in selected_fields %}
+          <td class="performance-cell {% if benchmark.inference_time < 10 %}high{% elif benchmark.inference_time < 50 %}medium{% else %}low{% endif %}">
+            {{ benchmark.inference_time }}
+            <div class="bar-container">
+              <div class="bar" style="width: {% widthratio benchmark.inference_time 100 100 %}%"></div>
+            </div>
+          </td>
+        {% endif %}
+        {% if 'memory_usage' in selected_fields %}
+          <td>{{ benchmark.memory_usage }}</td>
+        {% endif %}
       </tr>
       {% endfor %}
     </tbody>
@@ -305,32 +481,24 @@
 <script>
   // Initialize bars after page load
   document.addEventListener('DOMContentLoaded', function() {
-    // Set max values for bars
-    const maxInferenceTime = 100; // Adjust based on your expected max value
-    const maxAccuracy = 100; // Accuracy is already percentage
+    const maxInferenceTime = 100;
     
     document.querySelectorAll('.bar').forEach(bar => {
       const container = bar.parentElement;
       const cell = container.parentElement;
       
-      // Get the numeric value from the cell text
       let value = parseFloat(cell.textContent.trim().split(' ')[0]);
+      const percentage = Math.min((value / maxInferenceTime) * 100, 100);
       
-      // Determine max value based on column
-      const isInferenceTime = cell.classList.contains('performance-cell') && 
-                             (cell.classList.contains('high') || 
-                              cell.classList.contains('medium') || 
-                              cell.classList.contains('low'));
-      
-      const max = isInferenceTime ? maxInferenceTime : maxAccuracy;
-      
-      // Calculate percentage (capped at 100%)
-      const percentage = Math.min((value / max) * 100, 100);
-      
-      // Set the width with a slight delay for animation
       setTimeout(() => {
         bar.style.width = percentage + '%';
       }, 100);
+    });
+
+    // Auto-submit form when filters change (optional)
+    const form = document.getElementById('benchmark-filters');
+    form.addEventListener('change', function() {
+      this.submit();
     });
   });
 </script>

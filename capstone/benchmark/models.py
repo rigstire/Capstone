@@ -11,7 +11,7 @@ class Benchmark(models.Model):
     accuracy = models.FloatField(help_text="Accuracy as a percentage")  # E.g., 95.3 for 95.3%
     memory_usage = models.FloatField(blank=True, null=True, help_text="Power used in watts")
     compute_units = models.FloatField(blank=True, null= True, help_text="Number of compute units used for image processing")
-    test_dataset = models.CharField(blank=True,null=True)
+    test_dataset = models.CharField(blank=True,null=True, max_length=200)
     notes = models.TextField(blank=True, null=True)
 
     class Meta:
