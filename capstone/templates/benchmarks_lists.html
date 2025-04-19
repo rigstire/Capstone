@@ -202,18 +202,24 @@
     box-shadow: 0 0 8px var(--danger);
   }
   
-  /* Data visualization bars */
+  /* Updated Data visualization bars */
   .bar-container {
     background: rgba(0, 240, 255, 0.1);
     height: 6px;
     border-radius: 3px;
     margin-top: 0.3rem;
+    width: 100px; /* Fixed width */
+    position: relative;
+    overflow: hidden;
   }
   
   .bar {
     height: 100%;
     border-radius: 3px;
     background: linear-gradient(90deg, var(--primary), var(--secondary));
+    width: 0; /* Start at 0 */
+    max-width: 100%; /* Never exceed container */
+    transition: width 0.5s ease-out;
   }
   
   /* Scanline effect */
@@ -271,7 +277,6 @@
         <th>Device</th>
         <th>Test Date</th>
         <th>Inference Time (ms)</th>
-        <th>Accuracy (%)</th>
         <th>Memory Usage</th>
       </tr>
     </thead>
@@ -287,10 +292,7 @@
             <div class="bar" style="width: {% widthratio benchmark.inference_time 100 100 %}%"></div>
           </div>
         </td>
-        <td class="performance-cell {% if benchmark.accuracy > 90 %}high{% elif benchmark.accuracy > 70 %}medium{% else %}low{% endif %}">
-          {{ benchmark.accuracy }}
-          <div class="bar-container">
-            <div class="bar" style="width: {{ benchmark.accuracy }}%"></div>
+
           </div>
         </td>
         <td>{{ benchmark.memory_usage }}</td>
@@ -299,5 +301,38 @@
     </tbody>
   </table>
 </div>
+
+<script>
+  // Initialize bars after page load
+  document.addEventListener('DOMContentLoaded', function() {
+    // Set max values for bars
+    const maxInferenceTime = 100; // Adjust based on your expected max value
+    const maxAccuracy = 100; // Accuracy is already percentage
+    
+    document.querySelectorAll('.bar').forEach(bar => {
+      const container = bar.parentElement;
+      const cell = container.parentElement;
+      
+      // Get the numeric value from the cell text
+      let value = parseFloat(cell.textContent.trim().split(' ')[0]);
+      
+      // Determine max value based on column
+      const isInferenceTime = cell.classList.contains('performance-cell') && 
+                             (cell.classList.contains('high') || 
+                              cell.classList.contains('medium') || 
+                              cell.classList.contains('low'));
+      
+      const max = isInferenceTime ? maxInferenceTime : maxAccuracy;
+      
+      // Calculate percentage (capped at 100%)
+      const percentage = Math.min((value / max) * 100, 100);
+      
+      // Set the width with a slight delay for animation
+      setTimeout(() => {
+        bar.style.width = percentage + '%';
+      }, 100);
+    });
+  });
+</script>
 
 {% endblock %}
