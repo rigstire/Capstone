@@ -12,6 +12,9 @@
     --light: #e0e0ff;
     --glow: 0 0 10px var(--primary), 0 0 20px var(--primary);
     --glow-secondary: 0 0 10px var(--secondary), 0 0 20px var(--secondary);
+    --success: #00ff88;
+    --warning: #ffaa00;
+    --danger: #ff3366;
   }
   
   body {
@@ -69,136 +72,167 @@
     box-shadow: var(--glow);
   }
   
-  .models-container {
-    max-width: 1200px;
+  .models-grid-container {
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 0 1rem;
+    padding: 0 2rem;
   }
   
-  .models-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: rgba(10, 10, 26, 0.8);
-    box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
-    border-radius: 10px;
-    overflow: hidden;
-    position: relative;
+  .models-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 2rem;
     margin-bottom: 3rem;
   }
   
-  .models-table:before {
+  .model-card {
+    background: rgba(10, 10, 26, 0.8);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.15);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .model-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 35px rgba(0, 240, 255, 0.3);
+    border-color: var(--primary);
+  }
+  
+  .model-card::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
+    height: 4px;
     background: linear-gradient(90deg, var(--primary), var(--secondary));
     box-shadow: var(--glow);
   }
   
-  .models-table th {
-    background: rgba(0, 240, 255, 0.1);
-    color: var(--primary);
-    padding: 1.2rem 1rem;
-    text-align: left;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-family: 'Orbitron', sans-serif;
-    position: relative;
-  }
-  
-  .models-table th:after {
+  .model-card::after {
     content: '';
     position: absolute;
     bottom: 0;
-    left: 1rem;
-    right: 1rem;
-    height: 1px;
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgba(0, 240, 255, 0.03) 50%,
+      transparent 100%
+    );
+    pointer-events: none;
   }
   
-  .models-table td {
-    padding: 1rem;
-    border-bottom: 1px solid rgba(0, 240, 255, 0.1);
-    position: relative;
-    transition: all 0.3s ease;
-  }
-  
-  .models-table tr:last-child td {
-    border-bottom: none;
-  }
-  
-  .models-table tr:hover td {
-    background: rgba(0, 240, 255, 0.05);
-  }
-  
-  .models-table tr:hover td:first-child {
-    box-shadow: inset 4px 0 0 var(--primary);
-  }
-  
-  .models-table td a {
-    color: var(--secondary);
-    text-decoration: none;
-    transition: all 0.3s ease;
-    position: relative;
-    font-weight: 500;
-  }
-  
-  .models-table td a:hover {
+  .model-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.8rem;
     color: var(--primary);
     text-shadow: var(--glow);
+    transition: all 0.3s ease;
   }
   
-  .models-table td a:after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 0;
-    height: 1px;
-    background: var(--primary);
-    transition: width 0.3s ease;
+  .model-card:hover .model-icon {
+    transform: scale(1.1);
+    color: var(--secondary);
+    text-shadow: var(--glow-secondary);
   }
   
-  .models-table td a:hover:after {
-    width: 100%;
+  .model-name {
+    color: var(--primary);
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
   }
   
-  /* Pulse animation for table rows */
-  @keyframes pulse {
-    0% { background: rgba(0, 240, 255, 0); }
-    50% { background: rgba(0, 240, 255, 0.05); }
-    100% { background: rgba(0, 240, 255, 0); }
+  .model-card:hover .model-name {
+    color: var(--secondary);
+    text-shadow: var(--glow-secondary);
   }
   
-  .models-table tr {
-    animation: pulse 8s infinite;
+  .model-type {
+    color: var(--light);
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-top: 0.5rem;
   }
   
-  .models-table tr:nth-child(2n) {
+  .model-card a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    height: 100%;
+  }
+  
+  /* Animation for cards */
+  @keyframes card-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  
+  .model-card {
+    animation: card-float 6s ease-in-out infinite;
+  }
+  
+  .model-card:nth-child(2n) {
     animation-delay: 1s;
   }
   
-  .models-table tr:nth-child(3n) {
+  .model-card:nth-child(3n) {
     animation-delay: 2s;
   }
   
-  .models-table tr:nth-child(4n) {
+  .model-card:nth-child(4n) {
     animation-delay: 3s;
   }
   
   /* Responsive adjustments */
-  @media (max-width: 768px) {
-    .models-container {
-      overflow-x: auto;
-      padding: 0;
+  @media (max-width: 1024px) {
+    .models-grid {
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1.5rem;
     }
     
-    .models-table {
-      font-size: 0.9rem;
-      min-width: 700px;
+    .model-icon {
+      width: 70px;
+      height: 70px;
+      font-size: 2.4rem;
+    }
+    
+    .model-name {
+      font-size: 1.1rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .models-grid {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+    
+    .model-card {
+      padding: 1.2rem;
+    }
+    
+    .model-icon {
+      width: 60px;
+      height: 60px;
+      font-size: 2rem;
+      margin-bottom: 1rem;
     }
     
     h1.neon {
@@ -208,32 +242,63 @@
 </style>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <div class="models-header">
-  <h1 class="neon typing">AI Models</h1>
+  <h1 class="neon typing">Models</h1>
 </div>
 
-<div class="models-container">
-  <table class="models-table">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Parameters</th>
-        <th>Accuracy</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for model in ai_models %}
-      <tr>
-        <td><a href="{% url 'ai_model_detail' model.id %}">{{ model.name }}</a></td>
-
-
-        <td>{{ model.parameters }}</td>
-        <td>{{ model.accuracy }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<div class="models-grid-container">
+  <div class="models-grid">
+    {% for model in ai_models %}
+    <div class="model-card">
+      <a href="{% url 'ai_model_detail' model.id %}">
+        <div class="model-icon">
+          {% if "vision" in model.model_type.lower %}
+            <i class="fas fa-eye"></i>
+          {% elif "language" in model.model_type.lower %}
+            <i class="fas fa-language"></i>
+          {% elif "audio" in model.model_type.lower %}
+            <i class="fas fa-music"></i>
+          {% else %}
+            <i class="fas fa-robot"></i>
+          {% endif %}
+        </div>
+        <div class="model-name">{{ model.name }}</div>
+        <div class="model-type">{{ model.model_type }}</div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
 </div>
+
+<script>
+  // Add slight random delay to card animations
+  document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.model-card');
+    cards.forEach((card, index) => {
+      const delay = (index % 4) * 0.5;
+      card.style.animationDelay = `${delay}s`;
+      
+      // Add ripple effect on click
+      card.addEventListener('click', function(e) {
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple-effect';
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        
+        this.appendChild(ripple);
+        
+        setTimeout(() => {
+          ripple.remove();
+        }, 1000);
+      });
+    });
+  });
+</script>
 
 {% endblock %}
