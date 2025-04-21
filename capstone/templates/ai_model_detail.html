@@ -1,30 +1,323 @@
-{% extends "base.html" %}<h1>{{ ai_model.name }}</h1>
+{% extends "base.html" %}
 {% load static %}
 
 {% block content %}
-<p><strong>Model:</strong> {{ai_model.name}}</p>
-<p><strong>Parameters:</strong> {{ ai_model.parameters }}</p>
-<p><strong>Description:</strong> {{ ai_model.description }}</p>
+<style>
+    /* AI Model Detail Page Styles */
+    :root {
+        --primary: #00f0ff;
+        --secondary: #ff00f0;
+        --dark: #0a0a1a;
+        --darker: #050510;
+        --light: #e0e0ff;
+        --glow: 0 0 10px var(--primary), 0 0 20px var(--primary);
+        --success: #00ff88;
+        --warning: #ffaa00;
+        --danger: #ff3366;
+    }
+    
+    .ai-model-detail {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        color: var(--light);
+    }
+    
+    .model-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+    }
+    
+    .model-title {
+        font-size: 2.5rem;
+        color: var(--primary);
+        margin: 0;
+        text-shadow: var(--glow);
+        font-family: 'Orbitron', sans-serif;
+    }
 
-<h2 class="neon typing">Benchmarks</h2>
-<table>
-    <tr>
-        <th>Device</th>
-        <th>Test Date</th>
-        <th>Inference Time (ms)</th>
-        <th>Memory Usage (mb)</th>
-        <th>Accuracy (%)</th>
-    </tr>
-    {% for benchmark in ai_model.benchmarks.all %}
-    <tr>
-        <td><a href="{% url 'device_detail' benchmark.device.id %}">{{ benchmark.device.name }}</a></td>
-        <td>{{ benchmark.test_date }}</td>
-        <td>{{ benchmark.inference_time }}</td>
-        <td>{{ benchmark.memory_usage }}</td>
-        <td>{{ ai_model.accuracy }}</td>
-    </tr>
-    {% endfor %}
-</table>
+    .model-info {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+    
+    .info-card {
+        background: rgba(30, 30, 30, 0.7);
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid var(--primary);
+    }
+    
+    .description-card {
+        grid-column: 1 / -1;
+    }
+    
+    .info-label {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+    
+    .info-value {
+        margin: 0;
+        line-height: 1.6;
+    }
+    .qualcomm-card {
+        background: rgba(30, 30, 30, 0.7);
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #00F0FF; 
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    
+    .qualcomm-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(255, 0, 240, 1);
+        border-left-color: #FF00F0;
+    }
+    
+    .qualcomm-logo {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+        /*filter: drop-shadow(0 0 8px rgba(0, 240, 255, 1));*/
+    }
+    
+    .qualcomm-card:hover .qualcomm-logo {
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 12px rgba(255, 0, 240, 1));
+    }
+    
+    .qualcomm-link {
+    display: block;
+    text-decoration: none;
+}
 
-<a href="{% url 'ai_models_list' %}">Back to AI Models</a>
+.qualcomm-link-text {
+    color: #00F0FF;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    margin-top: 10px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.qualcomm-card:hover .qualcomm-link-text {
+    color: #FF00F0;
+    text-shadow: 0 0 8px rgba(255, 153, 0, 0.5);
+}
+    
+    /* Sorting controls */
+    .sort-controls {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+        align-items: center;
+    }
+    
+    .sort-btn {
+        background: rgba(0, 240, 255, 0.1);
+        color: var(--primary);
+        border: 1px solid var(--primary);
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-family: 'Orbitron', sans-serif;
+        transition: all 0.3s;
+    }
+    
+    .sort-btn:hover {
+        background: rgba(0, 240, 255, 0.2);
+        box-shadow: var(--glow);
+    }
+    
+    .sort-btn.active {
+        background: var(--primary);
+        color: var(--dark);
+        font-weight: bold;
+    }
+    
+    /* Table style */
+    .benchmarks-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: rgba(10, 10, 26, 0.8);
+        box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+        margin-bottom: 3rem;
+    }
+    
+    .benchmarks-table th {
+        background: rgba(0, 240, 255, 0.1);
+        color: var(--primary);
+        padding: 1.2rem 1rem;
+        text-align: left;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-family: 'Orbitron', sans-serif;
+        position: relative;
+    }
+    
+    .benchmarks-table td {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+        position: relative;
+        transition: all 0.3s ease;
+    }
+    
+    .benchmarks-table tr:hover td {
+        background: rgba(0, 240, 255, 0.05);
+    }
+    
+    .back-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: rgba(0, 240, 255, 0.1);
+        color: var(--primary);
+        text-decoration: none;
+        border-radius: 4px;
+        transition: all 0.3s;
+        border: 1px solid var(--primary);
+        font-family: 'Orbitron', sans-serif;
+    }
+    
+    .back-button:hover {
+        background-color: rgba(0, 240, 255, 0.2);
+        box-shadow: var(--glow);
+    }
+    
+    /* Typing animation for neon text */
+    h1.neon {
+        color: var(--primary);
+        text-shadow: var(--glow);
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        font-family: 'Orbitron', sans-serif;
+        letter-spacing: 2px;
+        display: inline-block;
+    }
+    
+    h1.neon.typing {
+        overflow: hidden;
+        white-space: nowrap;
+        border-right: 3px solid var(--primary);
+        animation: 
+            typing 3.5s steps(40, end),
+            blink-caret 0.75s step-end infinite;
+    }
+    
+    @keyframes typing {
+        from { width: 0 }
+        to { width: 100% }
+    }
+    
+    @keyframes blink-caret {
+        from, to { border-color: transparent }
+        50% { border-color: var(--primary); }
+    }
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+
+<div class="ai-model-detail">
+    <div class="model-header">
+        <h1 class="model-title">{{ ai_model.name }}</h1>
+    </div>
+
+    <div class="model-info">
+        <div class="info-card">
+            <h2 class="info-label">Model</h2>
+            <p class="info-value">{{ ai_model.name }}</p>
+        </div>
+
+        <div class="info-card">
+            <h2 class="info-label">Parameters</h2>
+            <p class="info-value">
+                {% if ai_model.parameters %}
+                    {{ ai_model.parameters }} million
+                {% else %}
+                    N/A
+                {% endif %}
+            </p>
+        </div>
+    <!-- New Qualcomm Card -->
+    {% if ai_model.qualcomm_link %}
+    <a href="{{ ai_model.qualcomm_link }}" target="_blank" class="qualcomm-link">
+        <div class="qualcomm-card">
+            <img src="{% static 'images/qualcomm-icon.png' %}" alt="Qualcomm" class="qualcomm-logo">
+            <span class="qualcomm-link-text">View on Qualcomm AI Hub</span>
+        </div>
+    </a>
+    {% endif %}
+
+        <div class="info-card description-card">
+            <h2 class="info-label">Description</h2>
+            <p class="info-value">{{ ai_model.description|default:"No description available" }}</p>
+        </div>
+    </div>
+
+    <h1 class="neon typing">Benchmarks</h1>
+    
+    <!-- Sorting Controls -->
+    <div class="sort-controls">
+        <span>Sort by:</span>
+        <button class="sort-btn {% if request.GET.sort == 'inference_time' %}active{% endif %}" 
+                onclick="sortTable('inference_time')">Fastest Inference</button>
+        <button class="sort-btn {% if request.GET.sort == '-accuracy' %}active{% endif %}" 
+                onclick="sortTable('-accuracy')">Highest Accuracy</button>
+    </div>
+
+    <table class="benchmarks-table">
+        <thead>
+            <tr>
+                <th>Device</th>
+                <th>Test Date</th>
+                <th>Inference Time (ms)</th>
+                <th>Memory Usage (mb)</th>
+                <th>Accuracy (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for benchmark in benchmarks %}
+            <tr>
+                <td><a href="{% url 'device_detail' benchmark.device.id %}">{{ benchmark.device.name }}</a></td>
+                <td>{{ benchmark.test_date }}</td>
+                <td>{{ benchmark.inference_time }}</td>
+                <td>{{ benchmark.memory_usage }}</td>
+                <td>{{ benchmark.accuracy }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'ai_models_list' %}" class="back-button">Back to AI Models</a>
+</div>
+
+<script>
+    function sortTable(sortBy) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('sort', sortBy);
+        window.location.href = url.toString();
+    }
+    
+    // Initialize typing animation
+    document.addEventListener('DOMContentLoaded', function() {
+        // This is already handled by the CSS animation
+    });
+</script>
 {% endblock %}

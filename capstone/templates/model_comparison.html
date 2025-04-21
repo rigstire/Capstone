@@ -289,7 +289,7 @@
         <td>{{ benchmark_b.accuracy }}</td>
       </tr>
       <tr>
-        <td>Memory Usage (Watts)</td>
+        <td>Memory Usage (MB)</td>
         <td>{{ benchmark_a.memory_usage }}</td>
         <td>{{ benchmark_b.memory_usage }}</td>
       </tr>
@@ -304,9 +304,9 @@
         <td>{{ benchmark_b.device.name }}</td>
       </tr>
       <tr>
-        <td>Notes</td>
-        <td>{{ benchmark_a.notes|default:"N/A" }}</td>
-        <td>{{ benchmark_b.notes|default:"N/A" }}</td>
+        <td>Test Dataset</td>
+        <td>{{ benchmark_a.test_dataset}}</td>
+        <td>{{ benchmark_b.test_dataset}}</td>
       </tr>
     </tbody>
   </table>

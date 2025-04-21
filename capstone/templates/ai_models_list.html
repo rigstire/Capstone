@@ -88,13 +88,15 @@
   .model-card {
     background: rgba(10, 10, 26, 0.8);
     border-radius: 12px;
-    padding: 1.5rem;
+    padding: 1.5rem 0.8rem;
     text-align: center;
     transition: all 0.3s ease;
     border: 1px solid rgba(0, 240, 255, 0.2);
     box-shadow: 0 0 25px rgba(0, 240, 255, 0.15);
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
   
   .model-card:hover {
@@ -133,7 +135,7 @@
   .model-icon {
     width: 80px;
     height: 80px;
-    margin: 0 auto 1.5rem;
+    margin: 0 auto 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -157,6 +159,14 @@
     transition: all 0.3s ease;
     font-family: 'Orbitron', sans-serif;
     letter-spacing: 1px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 3em;
+    line-height: 1.5em;
+    padding: 0 0.5rem;
   }
   
   .model-card:hover .model-name {
@@ -169,6 +179,14 @@
     font-size: 0.9rem;
     opacity: 0.8;
     margin-top: 0.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 2.8em;
+    line-height: 1.4em;
+    padding: 0 0.5rem;
   }
   
   .model-card a {
@@ -176,6 +194,7 @@
     color: inherit;
     display: block;
     height: 100%;
+    padding: 0 0.5rem;
   }
   
   /* Animation for cards */
@@ -215,6 +234,14 @@
     
     .model-name {
       font-size: 1.1rem;
+      -webkit-line-clamp: 2;
+      min-height: 2.8em;
+    }
+    
+    .model-type {
+      font-size: 0.85rem;
+      -webkit-line-clamp: 2;
+      min-height: 2.6em;
     }
   }
   
@@ -225,14 +252,26 @@
     }
     
     .model-card {
-      padding: 1.2rem;
+      padding: 1.2rem 0.6rem;
     }
     
     .model-icon {
       width: 60px;
       height: 60px;
       font-size: 2rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0.8rem;
+    }
+    
+    .model-name {
+      font-size: 1rem;
+      -webkit-line-clamp: 2;
+      min-height: 2.6em;
+    }
+    
+    .model-type {
+      font-size: 0.8rem;
+      -webkit-line-clamp: 1;
+      min-height: 1.4em;
     }
     
     h1.neon {
@@ -240,40 +279,96 @@
     }
   }
 </style>
+<!-- Add this after your existing styles -->
+<style>
+  .model-section {
+    margin-bottom: 4rem;
+  }
+  
+  .section-header {
+    color: var(--primary);
+    text-shadow: var(--glow);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8rem;
+    margin: 2rem 0 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--primary);
+    display: flex;
+    align-items: center;
+  }
+  
+  .section-header i {
+    margin-right: 1rem;
+    font-size: 1.5rem;
+  }
+  
+  .model-count-badge {
+    background: var(--primary);
+    color: var(--dark);
+    padding: 0.2rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    margin-left: 1rem;
+    font-weight: bold;
+  }
+</style>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <div class="models-header">
-  <h1 class="neon typing">Models</h1>
+  <h1 class="neon typing">Semantic Segmentation Models</h1>
 </div>
 
+
+<!-- Replace the models-grid section with this: -->
 <div class="models-grid-container">
-  <div class="models-grid">
-    {% for model in ai_models %}
-    <div class="model-card">
-      <a href="{% url 'ai_model_detail' model.id %}">
-        <div class="model-icon">
-          {% if "vision" in model.model_type.lower %}
-            <i class="fas fa-eye"></i>
-          {% elif "language" in model.model_type.lower %}
-            <i class="fas fa-language"></i>
-          {% elif "audio" in model.model_type.lower %}
-            <i class="fas fa-music"></i>
-          {% else %}
+  <!-- Large Models Section -->
+  <div class="model-section">
+    <h2 class="section-header">
+      <i class="fas fa-server"></i>
+      Large Models (30M+ Parameters)
+      <span class="model-count-badge">{{ large_models|length }}</span>
+    </h2>
+    <div class="models-grid">
+      {% for model in large_models %}
+      <div class="model-card">
+        <a href="{% url 'ai_model_detail' model.id %}">
+          <div class="model-icon">
             <i class="fas fa-robot"></i>
-          {% endif %}
-        </div>
-        <div class="model-name">{{ model.name }}</div>
-        <div class="model-type">{{ model.model_type }}</div>
-      </a>
+          </div>
+          <div class="model-name">{{ model.name }}</div>
+          <div class="model-type">{{ model.parameters|floatformat:1 }}M parameters</div>
+        </a>
+      </div>
+      {% endfor %}
     </div>
-    {% endfor %}
+  </div>
+
+  <!-- Small Models Section -->
+  <div class="model-section">
+    <h2 class="section-header">
+      <i class="fas fa-mobile-alt"></i>
+      Small Models (<30M Parameters)
+      <span class="model-count-badge">{{ small_models|length }}</span>
+    </h2>
+    <div class="models-grid">
+      {% for model in small_models %}
+      <div class="model-card">
+        <a href="{% url 'ai_model_detail' model.id %}">
+          <div class="model-icon">
+            <i class="fas fa-robot"></i>
+          </div>
+          <div class="model-name">{{ model.name }}</div>
+          <div class="model-type">{{ model.parameters|floatformat:1 }}M parameters</div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
   </div>
 </div>
 
 <script>
-  // Add slight random delay to card animations
   document.addEventListener('DOMContentLoaded', function() {
     const cards = document.querySelectorAll('.model-card');
     cards.forEach((card, index) => {
@@ -297,6 +392,18 @@
           ripple.remove();
         }, 1000);
       });
+
+      // Add tooltips for truncated text
+      const name = card.querySelector('.model-name');
+      const type = card.querySelector('.model-type');
+      
+      if (name.scrollHeight > name.clientHeight) {
+        name.setAttribute('title', name.textContent);
+      }
+      
+      if (type.scrollHeight > type.clientHeight) {
+        type.setAttribute('title', type.textContent);
+      }
     });
   });
 </script>

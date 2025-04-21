@@ -4,11 +4,35 @@ from  device.models import Device
 from benchmark.models import Benchmark
 
 def ai_models_list(request):
-     return render(request, "ai_models_list.html", {"ai_models": AIModel.objects.all()})
-
+    # Get large models (>30M parameters)
+    large_models = AIModel.objects.filter(parameters__gt=30).order_by('name')
+    
+    # Get small models (<=30M parameters)
+    small_models = AIModel.objects.filter(parameters__lte=30).order_by('name')
+    
+    context = {
+        'large_models': large_models,
+        'small_models': small_models,
+    }
+    return render(request, "ai_models_list.html", context)
 def ai_model_detail(request, ai_model_id):
     ai_model = get_object_or_404(AIModel, id=ai_model_id)
-    return render(request, "ai_model_detail.html", {"ai_model": ai_model})
+    
+    # Get all benchmarks for this AI model
+    benchmarks = ai_model.benchmarks.all()
+    
+    # Handle sorting
+    sort_by = request.GET.get('sort', '')
+    if sort_by == 'inference_time':
+        benchmarks = benchmarks.order_by('inference_time')  # Fastest first
+    elif sort_by == '-accuracy':
+        benchmarks = benchmarks.order_by('-accuracy')  # Highest accuracy first
+    
+    context = {
+        'ai_model': ai_model,
+        'benchmarks': benchmarks,  # Pass the sorted queryset
+    }
+    return render(request, "ai_model_detail.html", context)
 
 def compare_models(request): 
     model_a_id = request.GET.get('model_a')

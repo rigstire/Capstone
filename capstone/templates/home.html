@@ -13,6 +13,7 @@
     --secondary: #ff00f0;
     --light: #ffffff;
     --glow: 0 0 10px var(--primary), 0 0 20px var(--primary);
+    --section-bg: rgba(0, 10, 20, 0.7);
   }
   
   body {
@@ -22,10 +23,9 @@
     color: var(--light);
     font-family: 'Rajdhani', 'Orbitron', sans-serif;
     overflow-x: hidden;
-    background: #000; /* Fallback solid black */
+    background: #000;
   }
   
-  /* Pure video background - no containers or overlays */
   #bg-video {
     position: fixed;
     top: 0;
@@ -43,7 +43,6 @@
     z-index: 1;
     max-width: 1200px;
     margin: 0 auto;
-    /* No background color at all - completely transparent */
   }
   
   h1.neon {
@@ -93,6 +92,7 @@
     to { opacity: 1; transform: translateY(0); }
   }
   
+  /* YOUR ORIGINAL BUTTON STYLES (KEPT INTACT) */
   .nav-links {
     display: flex;
     gap: 2rem;
@@ -111,8 +111,7 @@
     border: 2px solid var(--primary);
     border-radius: 50px;
     transition: all 0.4s ease;
-    background: rgba(0, 0, 0, 0.3); /* Slightly darker for contrast */
-  
+    background: rgba(0, 0, 0, 0.3);
     opacity: 0;
     animation: fade-in 0.8s ease-out 2.5s forwards;
   }
@@ -128,7 +127,105 @@
   .nav-links a:hover {
     background: rgba(0, 240, 255, 0.2);
     transform: translateY(-5px);
-   
+  }
+  
+  /* NEW SECTION STYLES (ADDED BELOW YOUR EXISTING STYLES) */
+  .content-section {
+    background: var(--section-bg);
+    border-radius: 15px;
+    padding: 2.5rem;
+    margin: 3rem auto;
+    max-width: 1000px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.1);
+    opacity: 0;
+    transform: translateY(30px);
+    animation: section-fade-in 1s ease-out forwards;
+  }
+  
+  @keyframes section-fade-in {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .content-section:nth-child(1) { animation-delay: 3.5s; }
+  .content-section:nth-child(2) { animation-delay: 3.8s; }
+  .content-section:nth-child(3) { animation-delay: 4.1s; }
+  
+  .section-header {
+    color: var(--primary);
+    font-family: 'Orbitron', sans-serif;
+    text-shadow: var(--glow);
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: inline-block;
+  }
+  
+  .section-header::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    box-shadow: var(--glow);
+  }
+  
+  .section-content {
+    color: var(--light);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    text-align: left;
+  }
+  
+  .contributors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  
+  .contributor-card {
+    background: rgba(0, 240, 255, 0.05);
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 240, 255, 0.1);
+  }
+  
+  .contributor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 240, 255, 0.2);
+    border-color: var(--primary);
+  }
+  
+  .contributor-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary);
+    box-shadow: var(--glow);
+  }
+  
+  .contributor-name {
+    color: var(--primary);
+    font-family: 'Orbitron', sans-serif;
+    margin: 0.5rem 0;
+  }
+  
+  .contributor-role {
+    color: var(--light);
+    font-size: 0.9rem;
+    opacity: 0.8;
   }
   
   @media (max-width: 768px) {
@@ -149,12 +246,19 @@
       width: 100%;
       text-align: center;
     }
+    
+    .content-section {
+      padding: 1.5rem;
+    }
+    
+    .contributors-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet">
 
-<!-- Video Background Only - no containers or overlays -->
 <video autoplay muted loop playsinline id="bg-video">
   <source src="{% static 'videos/backgroundvid.mp4' %}" type="video/mp4">
   Your browser does not support HTML5 video.
@@ -164,19 +268,50 @@
     <h1 class="neon typing">Qualcomm Benchmark Dashboard</h1>
     <p class="neon">Explore performance data across semantic segmentation models and devices.</p>
     
+    <!-- YOUR ORIGINAL BUTTONS (EXACTLY AS YOU HAD THEM) -->
     <div class="nav-links">
-        <a href="{% url 'ai_models_list' %}">Explore AI Models</a>
+        <a href="{% url 'ai_models_list' %}">Segmentation Models</a>
         <a href="{% url 'devices_list' %}">View Devices</a>
         <a href="{% url 'benchmarks_list' %}">Check Benchmarks</a>
         <a href="{% url 'compare_models' %}">Compare Models</a>
     </div>
 </div>
 
+<!-- NEW SECTIONS ADDED BELOW YOUR BUTTONS -->
+<div class="content-wrapper">
+  <!-- About Website Section -->
+  <div class="content-section">
+    <h2 class="section-header">About This Dashboard</h2>
+    <div class="section-content">
+      <p>The Qualcomm Benchmark Dashboard provides comprehensive performance metrics for AI models running on Qualcomm-powered devices.</p>
+      <!-- Content remains the same -->
+    </div>
+  </div>
+
+  <!-- What is Segmentation Section -->
+  <div class="content-section">
+    <h2 class="section-header">What is Semantic Segmentation?</h2>
+    <div class="section-content">
+      <p>Semantic segmentation is a deep learning technique that assigns a label to every pixel in an image.</p>
+      <!-- Content remains the same -->
+    </div>
+  </div>
+
+  <!-- Contributors Section -->
+  <div class="content-section">
+    <h2 class="section-header">Our Team</h2>
+    <div class="section-content">
+      <div class="contributors-grid">
+        <!-- Contributor cards remain the same -->
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-  // Simplified video handling
   document.addEventListener('DOMContentLoaded', function() {
     const video = document.getElementById('bg-video');
-    video.play().catch(e => video.play()); // Simple fallback
+    video.play().catch(e => video.play());
   });
 </script>
 

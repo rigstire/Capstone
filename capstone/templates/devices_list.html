@@ -8,8 +8,8 @@
     --primary: #00f0ff;
     --secondary: #ff00f0;
     --dark: #0a0a1a;
-    --darker: rgba(18, 18, 37, 0.9);
-    --light: #ffffff;
+    --darker: #050510;
+    --light: #e0e0ff;
     --glow: 0 0 10px var(--primary), 0 0 20px var(--primary);
     --glow-secondary: 0 0 10px var(--secondary), 0 0 20px var(--secondary);
     --success: #00ff88;
@@ -22,9 +22,8 @@
     color: var(--light);
     font-family: 'Rajdhani', 'Orbitron', sans-serif;
     background-image: 
-      linear-gradient(to bottom, var(--darker), var(--dark)),
-      radial-gradient(circle at 20% 30%, rgba(0, 240, 255, 0.15) 0%, transparent 30%),
-      radial-gradient(circle at 80% 70%, rgba(255, 0, 240, 0.15) 0%, transparent 30%);
+      radial-gradient(circle at 20% 30%, rgba(0, 240, 255, 0.1) 0%, transparent 20%),
+      radial-gradient(circle at 80% 70%, rgba(255, 0, 240, 0.1) 0%, transparent 20%);
   }
   
   .devices-header {
@@ -40,15 +39,13 @@
     margin-bottom: 0.5rem;
     font-family: 'Orbitron', sans-serif;
     letter-spacing: 2px;
+    display: inline-block;
   }
   
   h1.neon.typing {
     overflow: hidden;
     white-space: nowrap;
     border-right: 3px solid var(--primary);
-    width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
     animation: 
       typing 3.5s steps(40, end),
       blink-caret 0.75s step-end infinite;
@@ -75,123 +72,132 @@
     box-shadow: var(--glow);
   }
   
-  .devices-container {
-    max-width: 1200px;
+  .devices-grid-container {
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 0 1rem;
+    padding: 0 2rem;
   }
   
-  .devices-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: rgba(18, 18, 37, 0.85);
-    box-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
-    border-radius: 10px;
-    overflow: hidden;
-    position: relative;
+  .devices-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
     margin-bottom: 3rem;
-    border: 1px solid rgba(0, 240, 255, 0.3);
-    backdrop-filter: blur(4px);
   }
   
-  .devices-table:before {
+  .device-card {
+    background: rgba(10, 10, 26, 0.8);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.15);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .device-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 35px rgba(0, 240, 255, 0.3);
+    border-color: var(--primary);
+  }
+  
+  .device-card::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
+    height: 4px;
     background: linear-gradient(90deg, var(--primary), var(--secondary));
     box-shadow: var(--glow);
   }
   
-  .devices-table th {
-    background: linear-gradient(to right, rgba(0, 240, 255, 0.25), rgba(0, 240, 255, 0.15));
-    color: var(--primary);
-    padding: 1.2rem 1rem;
-    text-align: left;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-family: 'Orbitron', sans-serif;
-    position: relative;
-  }
-  
-  .devices-table th:after {
+  .device-card::after {
     content: '';
     position: absolute;
     bottom: 0;
-    left: 1rem;
-    right: 1rem;
-    height: 1px;
-    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgba(0, 240, 255, 0.03) 50%,
+      transparent 100%
+    );
+    pointer-events: none;
   }
   
-  .devices-table td {
-    padding: 1rem;
-    border-bottom: 1px solid rgba(0, 240, 255, 0.15);
-    position: relative;
-    transition: all 0.3s ease;
-    background: rgba(18, 18, 37, 0.7);
-  }
-  
-  .devices-table tr:last-child td {
-    border-bottom: none;
-  }
-  
-  .devices-table tr:hover td {
-    background: rgba(0, 240, 255, 0.2);
-  }
-  
-  .devices-table tr:hover td:first-child {
-    box-shadow: inset 4px 0 0 var(--primary);
-  }
-  
-  .devices-table td a {
-    color: var(--secondary);
-    text-decoration: none;
-    transition: all 0.3s ease;
-    position: relative;
-    font-weight: 500;
-  }
-  
-  .devices-table td a:hover {
+  .device-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.8rem;
     color: var(--primary);
     text-shadow: var(--glow);
+    transition: all 0.3s ease;
   }
   
-  .devices-table td a:after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 0;
-    height: 1px;
-    background: var(--primary);
-    transition: width 0.3s ease;
+  .device-card:hover .device-icon {
+    transform: scale(1.1);
+    color: var(--secondary);
+    text-shadow: var(--glow-secondary);
   }
   
-  .devices-table td a:hover:after {
-    width: 100%;
+  .device-name {
+    color: var(--primary);
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
   }
   
-  .spec-value {
-    font-weight: bold;
+  .device-card:hover .device-name {
+    color: var(--secondary);
+    text-shadow: var(--glow-secondary);
+  }
+  
+  .device-manufacturer {
     color: var(--light);
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-bottom: 0.5rem;
+  }
+  
+  .device-specs {
+    margin-top: 1rem;
+    text-align: left;
+  }
+  
+  .spec-item {
+    margin-bottom: 0.8rem;
   }
   
   .spec-label {
-    display: block;
-    font-size: 0.8rem;
     color: var(--primary);
-    margin-bottom: 0.3rem;
+    font-size: 0.8rem;
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+  
+  .spec-value {
+    color: var(--light);
+    font-size: 0.9rem;
+    font-weight: 500;
   }
   
   .bar-container {
     background: rgba(0, 240, 255, 0.1);
     height: 6px;
     border-radius: 3px;
-    margin-top: 0.5rem;
+    margin-top: 0.3rem;
     overflow: hidden;
   }
   
@@ -200,70 +206,164 @@
     background: linear-gradient(90deg, var(--primary), var(--secondary));
   }
   
-  @media (max-width: 768px) {
-    .devices-container {
-      overflow-x: auto;
-      padding: 0;
+  .device-card a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    height: 100%;
+  }
+  
+  /* Animation for cards */
+  @keyframes card-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  
+  .device-card {
+    animation: card-float 6s ease-in-out infinite;
+  }
+  
+  .device-card:nth-child(2n) {
+    animation-delay: 1s;
+  }
+  
+  .device-card:nth-child(3n) {
+    animation-delay: 2s;
+  }
+  
+  .device-card:nth-child(4n) {
+    animation-delay: 3s;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 1024px) {
+    .devices-grid {
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.5rem;
     }
     
-    .devices-table {
-      font-size: 0.9rem;
-      min-width: 700px;
+    .device-icon {
+      width: 70px;
+      height: 70px;
+      font-size: 2.4rem;
+    }
+    
+    .device-name {
+      font-size: 1.1rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .devices-grid {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    
+    .device-card {
+      padding: 1.2rem;
+    }
+    
+    .device-icon {
+      width: 60px;
+      height: 60px;
+      font-size: 2rem;
+      margin-bottom: 1rem;
     }
     
     h1.neon {
       font-size: 2rem;
     }
   }
+  
 </style>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <div class="devices-header">
   <h1 class="neon typing">Devices</h1>
 </div>
 
-<div class="devices-container">
-  <table class="devices-table">
-    <thead>
-      <tr>
-        <th>Device Name</th>
-        <th>Manufacturer</th>
-        <th>Chipset</th>
-        <th>Memory</th>
-        <th>Storage</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for device in devices %}
-      <tr>
-        <td>
-          <a href="{% url 'device_detail' device.id %}">{{ device.name }}</a>
-        </td>
-        <td>
-          <span class="spec-value">{{ device.manufacturer }}</span>
-        </td>
-        <td>
-          <span class="spec-value">{{ device.chipset }}</span>
-        </td>
-        <td>
-          <span class="spec-label">RAM</span>
-          <span class="spec-value">{{ device.ram }} MB</span>
-          <div class="bar-container">
-            <div class="bar" style="width: {% widthratio device.ram 16000 100 %}%"></div>
-          </div>
-        </td>
-        <td>
-          <span class="spec-label">Storage</span>
-          <span class="spec-value">{{ device.storage }} GB</span>
-          <div class="bar-container">
-            <div class="bar" style="width: {% widthratio device.storage 1000 100 %}%"></div>
-          </div>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<!-- Add this to your devices_list.html template, replacing the current devices-grid section -->
+
+<div class="devices-grid-container">
+  {% regroup devices|dictsort:"manufacturer" by manufacturer as manufacturer_list %}
+  
+  {% for manufacturer in manufacturer_list %}
+    <div class="manufacturer-group">
+      <h2 class="manufacturer-header">{{ manufacturer.grouper|default:"Unknown Manufacturer" }}</h2>
+      <div class="devices-grid">
+        {% for device in manufacturer.list %}
+        <div class="device-card">
+          <a href="{% url 'device_detail' device.id %}">
+            <div class="device-icon">
+              {% if "phone" in device.name.lower %}
+                <i class="fas fa-mobile-alt"></i>
+              {% elif "tablet" in device.name.lower %}
+                <i class="fas fa-tablet-alt"></i>
+              {% elif "laptop" in device.name.lower %}
+                <i class="fas fa-laptop"></i>
+              {% elif "server" in device.name.lower %}
+                <i class="fas fa-server"></i>
+              {% else %}
+                <i class="fas fa-microchip"></i>
+              {% endif %}
+            </div>
+            <div class="device-name">{{ device.name }}</div>
+            <div class="device-specs">
+              <div class="spec-item">
+                <span class="spec-label">Chipset</span>
+                <span class="spec-value">{{ device.chipset|default:"N/A" }}</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">RAM</span>
+                <span class="spec-value">{{ device.ram }} MB</span>
+                <div class="bar-container">
+                  <div class="bar" style="width: {% widthratio device.ram 16000 100 %}%"></div>
+                </div>
+              </div>
+              <div class="spec-item">
+                <span class="spec-label">Storage</span>
+                <span class="spec-value">{{ device.storage }} GB</span>
+                <div class="bar-container">
+                  <div class="bar" style="width: {% widthratio device.storage 1000 100 %}%"></div>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
 </div>
+<script>
+  // Add slight random delay to card animations
+  document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.device-card');
+    cards.forEach((card, index) => {
+      const delay = (index % 4) * 0.5;
+      card.style.animationDelay = `${delay}s`;
+      
+      // Add ripple effect on click
+      card.addEventListener('click', function(e) {
+        const rect = this.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple-effect';
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        
+        this.appendChild(ripple);
+        
+        setTimeout(() => {
+          ripple.remove();
+        }, 1000);
+      });
+    });
+  });
+</script>
 
 {% endblock %}

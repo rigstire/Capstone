@@ -5,6 +5,9 @@ name = "pypi"
 
 [packages]
 django = "*"
+django-import = "*"
+django-import-export = "*"
+pillow = "*"
 
 [dev-packages]
 
