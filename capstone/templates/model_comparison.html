@@ -215,7 +215,19 @@
     font-size: 1.2rem;
     text-shadow: var(--glow-secondary);
   }
-  
+
+  /* Chart container styles */
+  .chart-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: rgba(10, 10, 26, 0.8);
+    border-radius: 12px;
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    backdrop-filter: blur(10px);
+  }
+
   /* Responsive adjustments */
   @media (max-width: 768px) {
     .model-select-form {
@@ -226,10 +238,17 @@
     table {
       font-size: 0.9rem;
     }
+
+    .chart-container {
+      padding: 1rem;
+    }
   }
 </style>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet">
+<!-- Add Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <form method="get" class="model-select-form">
   <label for="model_a">Model A:</label>
   <select name="model_a" id="model_a" required>
@@ -268,6 +287,11 @@
 
 {% if model_a and model_b and benchmark_a and benchmark_b %}
   <h2>Comparing {{ model_a.name }} vs {{ model_b.name }}</h2>
+
+  <!-- Add the chart container -->
+  <div class="chart-container">
+    <canvas id="comparisonChart"></canvas>
+  </div>
 
   <table>
     <thead>
@@ -310,6 +334,105 @@
       </tr>
     </tbody>
   </table>
+
+  <!-- JavaScript to render the chart -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const ctx = document.getElementById('comparisonChart').getContext('2d');
+      
+      // Extract data from the template variables
+      const modelAName = "{{ model_a.name }}";
+      const modelBName = "{{ model_b.name }}";
+      
+      // Convert benchmark data to numbers
+      const inferenceTimeA = parseFloat("{{ benchmark_a.inference_time }}");
+      const inferenceTimeB = parseFloat("{{ benchmark_b.inference_time }}");
+      const accuracyA = parseFloat("{{ benchmark_a.accuracy }}");
+      const accuracyB = parseFloat("{{ benchmark_b.accuracy }}");
+      const memoryUsageA = parseFloat("{{ benchmark_a.memory_usage }}");
+      const memoryUsageB = parseFloat("{{ benchmark_b.memory_usage }}");
+      const computeUnitsA = parseFloat("{{ benchmark_a.compute_units }}");
+      const computeUnitsB = parseFloat("{{ benchmark_b.compute_units }}");
+      
+      // Create the chart
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Inference Time (ms)', 'Accuracy (%)', 'Memory Usage (MB)', 'Compute Units'],
+          datasets: [
+            {
+              label: modelAName,
+              data: [inferenceTimeA, accuracyA, memoryUsageA, computeUnitsA],
+              backgroundColor: 'rgba(0, 240, 255, 0.7)',
+              borderColor: 'rgba(0, 240, 255, 1)',
+              borderWidth: 1,
+              hoverBackgroundColor: 'rgba(0, 240, 255, 0.9)',
+            },
+            {
+              label: modelBName,
+              data: [inferenceTimeB, accuracyB, memoryUsageB, computeUnitsB],
+              backgroundColor: 'rgba(255, 0, 240, 0.7)',
+              borderColor: 'rgba(255, 0, 240, 1)',
+              borderWidth: 1,
+              hoverBackgroundColor: 'rgba(255, 0, 240, 0.9)',
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                color: 'rgba(0, 240, 255, 0.1)',
+              },
+              ticks: {
+                color: 'rgba(224, 224, 255, 0.8)',
+              }
+            },
+            x: {
+              grid: {
+                color: 'rgba(0, 240, 255, 0.1)',
+              },
+              ticks: {
+                color: 'rgba(224, 224, 255, 0.8)',
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: 'rgba(224, 224, 255, 0.8)',
+                font: {
+                  family: "'Orbitron', sans-serif",
+                }
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(10, 10, 26, 0.9)',
+              titleColor: 'rgba(0, 240, 255, 1)',
+              bodyColor: 'rgba(224, 224, 255, 0.8)',
+              borderColor: 'rgba(0, 240, 255, 0.3)',
+              borderWidth: 1,
+              padding: 10,
+              boxShadow: '0 0 10px rgba(0, 240, 255, 0.5)',
+              callbacks: {
+                label: function(context) {
+                  let label = context.dataset.label || '';
+                  if (label) {
+                    label += ': ';
+                  }
+                  label += context.parsed.y;
+                  return label;
+                }
+              }
+            }
+          }
+        }
+      });
+    });
+  </script>
 {% elif request.GET.model_a and request.GET.model_b %}
   <p class="no-data">No benchmark data available for one or both models.</p>
 {% endif %}
