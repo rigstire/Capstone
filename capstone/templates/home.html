@@ -255,8 +255,22 @@
       grid-template-columns: 1fr;
     }
   }
-</style>
 
+
+.jx-label {
+  background: rgba(0, 0, 0, 0.7) !important;
+  color: var(--primary) !important;
+  font-family: 'Orbitron', sans-serif !important;
+  text-shadow: 0 0 5px var(--primary) !important;
+}
+
+
+</style>
+<!-- JuxtaposeJS CSS -->
+<link rel="stylesheet" href="https://cdn.knightlab.com/libs/juxtapose/latest/css/juxtapose.css">
+
+<!-- JuxtaposeJS JavaScript -->
+<script src="https://cdn.knightlab.com/libs/juxtapose/latest/js/juxtapose.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet">
 
 <video autoplay muted loop playsinline id="bg-video">
@@ -265,7 +279,7 @@
 </video>
 
 <div class="content-wrapper">
-    <h1 class="neon typing">Qualcomm Benchmark Dashboard</h1>
+    <h1 class="neon typing">Semantic Segmentation<br>Benchmark Dashboard</h1>
     <p class="neon">Explore performance data across semantic segmentation models and devices.</p>
     
     <!-- YOUR ORIGINAL BUTTONS (EXACTLY AS YOU HAD THEM) -->
@@ -283,7 +297,12 @@
   <div class="content-section">
     <h2 class="section-header">About This Dashboard</h2>
     <div class="section-content">
-      <p>The Qualcomm Benchmark Dashboard provides comprehensive performance metrics for AI models running on Qualcomm-powered devices.</p>
+      <p>This benchmarking platform was developed through a collaboration between Qualcomm Technologies 
+        and California State University San Marcos (CSUSM) to evaluate on-device performance of pre-trained 
+        semantic segmentation models available on Qualcomm AI Hub. As part of this initiative, student teams 
+        partnered with Qualcomm mentors to design and deploy tools that help developers compare model efficiency 
+        across different devices, optimizing for real-world edge AI applications. This site intends to provide transparent 
+        performance metrics to guide AI model selection for mobile and embedded systems.</p>
       <!-- Content remains the same -->
     </div>
   </div>
@@ -292,17 +311,51 @@
   <div class="content-section">
     <h2 class="section-header">What is Semantic Segmentation?</h2>
     <div class="section-content">
-      <p>Semantic segmentation is a deep learning technique that assigns a label to every pixel in an image.</p>
+      <p>Semantic segmentation is a computer vision task that assigns a class label 
+        to each individual pixel in an image, effectively classifying every pixel into 
+        a predefined category. This process creates a dense prediction map, allowing the machine
+         to not only identify objects but also understand their boundaries and context within the image</p>
       <!-- Content remains the same -->
+    </div>
+    <div class="juxtapose" data-startingposition="50%" style="height: 500px;">
+      <img src="{% static 'images/2007_000033.jpg' %}" data-label="Original">
+      <img src="{% static 'images/2007_000033.png' %}" data-label="Segmented">
     </div>
   </div>
 
-  <!-- Contributors Section -->
-  <div class="content-section">
-    <h2 class="section-header">Our Team</h2>
-    <div class="section-content">
-      <div class="contributors-grid">
-        <!-- Contributor cards remain the same -->
+<!-- Contributors Section -->
+<div class="content-section">
+  <h2 class="section-header">Our Team</h2>
+  <div class="section-content">
+    <div class="contributors-grid">
+      <!-- Student Developer 1 -->
+      <div class="contributor-card">
+        <h3 class="contributor-name">Nicholas Brodsky</h3>
+        <p class="contributor-role">Student Developer</p>
+        <p class="contributor-bio">CSUSM Computer Science</p>
+      </div>
+
+      <!-- Student Developer 2 -->
+      <div class="contributor-card">
+        <h3 class="contributor-name">Avery Mickens</h3>
+        <p class="contributor-role">Student Developer</p>
+        <p class="contributor-bio">CSUSM Computer Science</p>
+        </div>
+
+
+      <!-- Student Developer 3 -->
+      <div class="contributor-card">
+        <h3 class="contributor-name">Brianna Flores</h3>
+        <p class="contributor-role">Student Developer</p>
+        <p class="contributor-bio">CSUSM Computer Science</p>
+        </div>
+
+      <!-- Qualcomm Mentor -->
+      <div class="contributor-card mentor-card">
+        <h3 class="contributor-name">Eyasu Mequanint</h3>
+        <p class="contributor-role">Mentor</p>
+        <p class="contributor-bio">Qualcomm Computer Vision</p>
+        </div>
       </div>
     </div>
   </div>
@@ -313,6 +366,26 @@
     const video = document.getElementById('bg-video');
     video.play().catch(e => video.play());
   });
+</script>
+<script src="https://cdn.knightlab.com/libs/juxtapose/latest/js/juxtapose.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Force recompute of slider positions
+  setTimeout(() => {
+    if (typeof juxtapose !== 'undefined') {
+      const sliders = document.querySelectorAll('.juxtapose');
+      sliders.forEach(slider => {
+        const jx = new juxtapose.JXSlider(slider);
+        
+        // Fix for initial misalignment
+        setTimeout(() => {
+          jx.setPosition(50); // Reset to center
+          jx.updateSlider();
+        }, 100);
+      });
+    }
+  }, 500);
+});
 </script>
 
 {% endblock %}

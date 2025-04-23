@@ -172,15 +172,16 @@
     height: 16px;
     cursor: pointer;
   }
+  
   /* Top Performers Section */
-.top-performers {
+  .top-performers {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
     margin-bottom: 2rem;
-}
-
-.performer-tile {
+  }
+  
+  .performer-tile {
     background: rgba(10, 10, 26, 0.8);
     border-radius: 12px;
     padding: 1.5rem;
@@ -190,9 +191,9 @@
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
-}
-
-.performer-tile::before {
+  }
+  
+  .performer-tile::before {
     content: '';
     position: absolute;
     top: 0;
@@ -201,24 +202,24 @@
     height: 4px;
     background: linear-gradient(90deg, var(--primary), var(--secondary));
     box-shadow: var(--glow);
-}
-
-.performer-tile:nth-child(1) {
+  }
+  
+  .performer-tile:nth-child(1) {
     border-color: var(--success);
     box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
-}
-
-.performer-tile:nth-child(2) {
+  }
+  
+  .performer-tile:nth-child(2) {
     border-color: var(--warning);
     box-shadow: 0 0 20px rgba(255, 170, 0, 0.3);
-}
-
-.performer-tile:nth-child(3) {
+  }
+  
+  .performer-tile:nth-child(3) {
     border-color: var(--primary);
     box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
-}
-
-.performer-rank {
+  }
+  
+  .performer-rank {
     position: absolute;
     top: 10px;
     left: 10px;
@@ -232,63 +233,64 @@
     justify-content: center;
     font-weight: bold;
     font-family: 'Orbitron', sans-serif;
-}
-
-.performer-tile:nth-child(1) .performer-rank {
+  }
+  
+  .performer-tile:nth-child(1) .performer-rank {
     background: var(--success);
-}
-
-.performer-tile:nth-child(2) .performer-rank {
+  }
+  
+  .performer-tile:nth-child(2) .performer-rank {
     background: var(--warning);
-}
-
-.performer-tile:nth-child(3) .performer-rank {
+  }
+  
+  .performer-tile:nth-child(3) .performer-rank {
     background: var(--primary);
-}
-
-.performer-value {
+  }
+  
+  .performer-value {
     font-size: 1.5rem;
     font-weight: bold;
     color: var(--primary);
     margin: 0.5rem 0;
     font-family: 'Orbitron', sans-serif;
-}
-
-.performer-tile:nth-child(1) .performer-value {
+  }
+  
+  .performer-tile:nth-child(1) .performer-value {
     color: var(--success);
-}
-
-.performer-tile:nth-child(2) .performer-value {
+  }
+  
+  .performer-tile:nth-child(2) .performer-value {
     color: var(--warning);
-}
-
-.performer-label {
+  }
+  
+  .performer-label {
     color: var(--light);
     opacity: 0.8;
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
-}
-
-.performer-model, .performer-device {
+  }
+  
+  .performer-model, .performer-device {
     font-size: 1.1rem;
     color: var(--light);
     margin-bottom: 0.3rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.performer-spec {
+  }
+  
+  .performer-spec {
     color: var(--primary);
     font-size: 0.9rem;
     opacity: 0.8;
-}
-
-@media (max-width: 768px) {
+  }
+  
+  @media (max-width: 768px) {
     .top-performers {
-        grid-template-columns: 1fr;
+      grid-template-columns: 1fr;
     }
-}
+  }
+  
   /* Table Styles */
   .benchmarks-table {
     width: 100%;
@@ -541,8 +543,8 @@
           <option value="">Default</option>
           <option value="inference_time" {% if request.GET.sort == 'inference_time' %}selected{% endif %}>Inference Time (Low to High)</option>
           <option value="-inference_time" {% if request.GET.sort == '-inference_time' %}selected{% endif %}>Inference Time (High to Low)</option>
-          <option value="accuracy" {% if request.GET.sort == 'accuracy' %}selected{% endif %}>Accuracy (High to Low)</option>
-          <option value="-accuracy" {% if request.GET.sort == '-accuracy' %}selected{% endif %}>Accuracy (Low to High)</option>
+          <option value="accuracy" {% if request.GET.sort == 'accuracy' %}selected{% endif %}>Accuracy (Low to high)</option>
+          <option value="-accuracy" {% if request.GET.sort == '-accuracy' %}selected{% endif %}>Accuracy (High to Low)</option>
           <option value="memory_usage" {% if request.GET.sort == 'memory_usage' %}selected{% endif %}>Memory Usage (Low to High)</option>
           <option value="-memory_usage" {% if request.GET.sort == '-memory_usage' %}selected{% endif %}>Memory Usage (High to Low)</option>
         </select>
@@ -561,48 +563,40 @@
       </div>
 
       <div class="filter-group">
-        <button type="submit">Apply Filters</button>
-        <button type="button" onclick="window.location.href='{% url 'benchmarks_list' %}'">Reset</button>
+        <button type="button" id="apply-filters">Apply Filters</button>
+        <button type="button" id="reset-filters">Reset</button>
       </div>
     </form>
   </div>
-
-<!-- Top Performers Section -->
-<h3 class="neon">Top Performers {% if request.GET.device %}for {{ request.GET.device }}{% endif %}</h3>
-{% if top_performers %}
-<div class="top-performers">
-    {% for benchmark in top_performers %}
-    <div class="performer-tile">
-        <div class="performer-rank">{{ forloop.counter }}</div>
-        
-        {% if request.GET.sort == '-inference_time' or not request.GET.sort %}
-            <div class="performer-label">Fastest Inference</div>
-            <div class="performer-value">{{ benchmark.inference_time }}ms</div>
-        {% elif request.GET.sort == 'accuracy' or request.GET.sort == '-accuracy' %}
-            <div class="performer-label">Highest Accuracy</div>
-            <div class="performer-value">{{ benchmark.accuracy|floatformat:1 }}%</div>
-        {% elif request.GET.sort == 'memory_usage' or request.GET.sort == '-memory_usage' %}
-            <div class="performer-label">Best Memory Usage</div>
-            <div class="performer-value">{{ benchmark.memory_usage }}MB</div>
-        {% endif %}
-        
-        <div class="performer-model">{{ benchmark.ai_model.name }}</div>
-        <div class="performer-device">{{ benchmark.device.name }}</div>
-        
-        {% if request.GET.sort == '-inference_time' or not request.GET.sort %}
-            <div class="performer-spec">Accuracy: {{ benchmark.accuracy|floatformat:1 }}%</div>
-            <div class="performer-spec">Memory: {{ benchmark.memory_usage }}MB</div>
-        {% elif request.GET.sort == 'accuracy' or request.GET.sort == '-accuracy' %}
-            <div class="performer-spec">Inference: {{ benchmark.inference_time }}ms</div>
-            <div class="performer-spec">Memory: {{ benchmark.memory_usage }}MB</div>
-        {% elif request.GET.sort == 'memory_usage' or request.GET.sort == '-memory_usage' %}
-            <div class="performer-spec">Inference: {{ benchmark.inference_time }}ms</div>
-            <div class="performer-spec">Accuracy: {{ benchmark.accuracy|floatformat:1 }}%</div>
-        {% endif %}
-    </div>
-    {% endfor %}
-</div>
-{% endif %}
+  <!-- Top Performers Section -->
+  <h3 class="neon">Top Performers {% if request.GET.device %}for {{ request.GET.device }}{% endif %}</h3>
+  {% if top_performers %}
+  <div class="top-performers">
+      {% for benchmark in top_performers %}
+      <div class="performer-tile">
+          <div class="performer-rank">{{ forloop.counter }}</div>
+          
+          <div class="performer-label">{{ sort_label }}</div>
+          <div class="performer-value">
+              {% if 'inference_time' in sort_field %}
+                  {{ benchmark.inference_time }}ms
+              {% elif 'accuracy' in sort_field %}
+                  {{ benchmark.accuracy|floatformat:1 }}%
+              {% elif 'memory_usage' in sort_field %}
+                  {{ benchmark.memory_usage }}MB
+              {% endif %}
+          </div>
+          
+          <div class="performer-model">{{ benchmark.ai_model.name }}</div>
+          <div class="performer-device">{{ benchmark.device.name }}</div>
+          
+          <div class="performer-spec">Inference: {{ benchmark.inference_time }}ms</div>
+          <div class="performer-spec">Accuracy: {{ benchmark.accuracy|floatformat:1 }}%</div>
+          <div class="performer-spec">Memory: {{ benchmark.memory_usage }}MB</div>
+      </div>
+      {% endfor %}
+  </div>
+  {% endif %}
 
   <!-- Benchmark Table -->
   <table class="benchmarks-table">
@@ -680,10 +674,27 @@
       }, 100);
     });
 
-    // Auto-submit form when filters change (optional)
+    // Form submission handler
     const form = document.getElementById('benchmark-filters');
-    form.addEventListener('change', function() {
-      this.submit();
+    const applyBtn = document.getElementById('apply-filters');
+    const resetBtn = document.getElementById('reset-filters');
+    
+    applyBtn.addEventListener('click', function() {
+      // Manually submit the form without page reload
+      const formData = new FormData(form);
+      const params = new URLSearchParams(formData);
+      
+      // Add checkbox values
+      document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+        params.append('fields', checkbox.value);
+      });
+      
+      // Update URL without reload
+      window.location.search = params.toString();
+    });
+    
+    resetBtn.addEventListener('click', function() {
+      window.location.href = '{% url 'benchmarks_list' %}';
     });
   });
 </script>
