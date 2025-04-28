@@ -277,6 +277,15 @@
       <option value="{{ device.id }}" {% if device.id|stringformat:"s" == request.GET.device_b %}selected{% endif %}>{{ device.name }}</option>
     {% endfor %}
   </select>
+  <label for="test_dataset">Test Dataset:</label>
+  <select name="test_dataset" id="test_dataset" required>
+    {% for dataset in all_test_datasets %}
+      <option value="{{ dataset }}" {% if dataset == selected_dataset %}selected{% endif %}>
+        {{ dataset }}
+      </option>
+    {% endfor %}
+  </select>
+  
 
   <button type="submit">
     <span class="btn-text">Compare Models</span>

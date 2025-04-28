@@ -528,11 +528,11 @@
       </div>
 
       <div class="filter-group">
-        <label for="input">Input Type:</label>
-        <select name="input" id="input">
-          <option value="">All Inputs</option>
-          {% for input in available_inputs %}
-            <option value="{{ input }}" {% if input == request.GET.input %}selected{% endif %}>{{ input }}</option>
+        <label for="test_dataset">Test Dataset:</label>
+        <select name="test_dataset" id="test_dataset">
+          <option value="">All Datasets</option>
+          {% for dataset in available_datasets %}
+            <option value="{{ dataset }}" {% if dataset == request.GET.test_dataset %}selected{% endif %}>{{ dataset }}</option>
           {% endfor %}
         </select>
       </div>

@@ -276,11 +276,46 @@
     <!-- Sorting Controls -->
     <div class="sort-controls">
         <span>Sort by:</span>
-        <button class="sort-btn {% if request.GET.sort == 'inference_time' %}active{% endif %}" 
-                onclick="sortTable('inference_time')">Fastest Inference</button>
-        <button class="sort-btn {% if request.GET.sort == '-accuracy' %}active{% endif %}" 
-                onclick="sortTable('-accuracy')">Highest Accuracy</button>
+        <a href="?{% if request.GET.test_dataset %}test_dataset={{ request.GET.test_dataset }}&{% endif %}sort=inference_time" 
+           class="sort-btn {% if request.GET.sort == 'inference_time' %}active{% endif %}">
+            Fastest Inference
+        </a>
+        <a href="?{% if request.GET.test_dataset %}test_dataset={{ request.GET.test_dataset }}&{% endif %}sort=-accuracy" 
+           class="sort-btn {% if request.GET.sort == '-accuracy' %}active{% endif %}">
+            Highest Accuracy
+        </a>
+        
+        <!-- Dataset Filter Dropdown -->
+        <div class="filter-control" style="margin-left: auto;">
+            <form method="get" style="display: flex; align-items: center; gap: 10px;">
+                <!-- Preserve sort parameter when submitting the form -->
+                {% if request.GET.sort %}
+                    <input type="hidden" name="sort" value="{{ request.GET.sort }}">
+                {% endif %}
+                
+                <label for="test_dataset" style="color: var(--primary); font-family: 'Orbitron', sans-serif;">
+                    Filter by Dataset:
+                </label>
+                <select name="test_dataset" id="test_dataset" onchange="this.form.submit()"
+                        style="background: rgba(10, 10, 26, 0.8); color: var(--light); 
+                               border: 1px solid var(--primary); padding: 8px 15px; 
+                               border-radius: 5px; font-family: 'Rajdhani', sans-serif;">
+                    <option value="">All Datasets</option>
+                    {% for dataset in unique_datasets %}
+                        <option value="{{ dataset }}" {% if request.GET.test_dataset == dataset %}selected{% endif %}>
+                            {{ dataset }}
+                        </option>
+                    {% endfor %}
+                </select>
+                {% if request.GET.test_dataset or request.GET.sort %}
+                    <a href="?" class="sort-btn" style="margin-left: 10px;">
+                        Clear All
+                    </a>
+                {% endif %}
+            </form>
+        </div>
     </div>
+
 
     <table class="benchmarks-table">
         <thead>
@@ -290,6 +325,7 @@
                 <th>Inference Time (ms)</th>
                 <th>Memory Usage (mb)</th>
                 <th>Accuracy (%)</th>
+                <th>Test Dataset</th>
             </tr>
         </thead>
         <tbody>
@@ -300,6 +336,7 @@
                 <td>{{ benchmark.inference_time }}</td>
                 <td>{{ benchmark.memory_usage }}</td>
                 <td>{{ benchmark.accuracy }}</td>
+                <td>{{benchmark.test_dataset}}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -312,9 +349,12 @@
     function sortTable(sortBy) {
         const url = new URL(window.location.href);
         url.searchParams.set('sort', sortBy);
+        // Preserve test_dataset if it exists
+        {% if request.GET.test_dataset %}
+            url.searchParams.set('test_dataset', '{{ request.GET.test_dataset }}');
+        {% endif %}
         window.location.href = url.toString();
     }
-    
     // Initialize typing animation
     document.addEventListener('DOMContentLoaded', function() {
         // This is already handled by the CSS animation
