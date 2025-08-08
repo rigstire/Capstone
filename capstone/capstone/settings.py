@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-ovr(20x(lp2=i62mdr09$11sv$4#j@=z2dm=v^^7nu432ng37*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -80,8 +80,14 @@ WSGI_APPLICATION = 'capstone.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',  # or 'mysql'
+        'NAME': 'segmentation',
+        'USER': 'amicke3000',
+        'PASSWORD': '08Mazda320Elantra!',
+        'HOST': 'segmentation.c96i0agg8fin.us-east-2.rds.amazonaws.com',
+        'PORT': '5432',
+    }
     }
 }
 
